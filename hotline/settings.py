@@ -1,4 +1,9 @@
-# Django settings for hotline project.
+# Django settings for hotlie project.
+
+import os
+
+ROOT_DIR = os.path.join(os.path.dirname(__file__), '..')
+TEMPLATE_DIR = os.path.abspath('%s/templates' % ROOT_DIR)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -24,11 +29,11 @@ DATABASES = {
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'Asia/Novosibirsk'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 SITE_ID = 1
 
@@ -149,3 +154,5 @@ LOGGING = {
         },
     }
 }
+
+from localsettings import *
