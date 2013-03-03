@@ -75,7 +75,7 @@ class Call(models.Model):
 
 	def print_operator_name(self):
 		return u"%s %s" % (self.op.last_name, self.op.first_name)
-
+		
 	print_operator_name.admin_order_field = 'op'
 	print_operator_name.short_description = 'Оператор'	
 		
