@@ -1,5 +1,6 @@
 ﻿from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Citizen(models.Model):
 	SNP = models.CharField("ФИО",max_length=200)
@@ -51,11 +52,11 @@ class MO(models.Model):
 	class Meta:
 		verbose_name = "медицинскую организацию"
 		verbose_name_plural = "Медицинские организации"
-
+		
 class Call(models.Model):
 	"Обращение по телефону"
 	
-	dt = models.DateTimeField("Дата и время получения")
+	dt = models.DateTimeField("Дата и время получения", default=timezone.now())
 	op = models.ForeignKey(User, verbose_name="Оператор")
 	citizen = models.ForeignKey(Citizen, verbose_name="Гражданин")
 	medorg = models.ForeignKey(MO, verbose_name="Медицинская организация", null=True, blank=True)
