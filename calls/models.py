@@ -56,7 +56,7 @@ class MO(models.Model):
 class Call(models.Model):
 	"Обращение по телефону"
 	
-	dt = models.DateTimeField("Дата и время получения", default=timezone.now())
+	dt = models.DateTimeField("Дата и время получения")
 	op = models.ForeignKey(User, verbose_name="Оператор")
 	citizen = models.ForeignKey(Citizen, verbose_name="Гражданин")
 	medorg = models.ForeignKey(MO, verbose_name="Медицинская организация", null=True, blank=True)
@@ -81,5 +81,6 @@ class Call(models.Model):
 		
 		
 	class Meta:
+		ordering = ['-id']
 		verbose_name = "обращение по телефону"
 		verbose_name_plural = "обращения по телефону"
