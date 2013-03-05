@@ -10,6 +10,11 @@ class Citizen(models.Model):
 	
 	last_appeal = models.DateTimeField("Дата последнего обращения", blank=True, null=True)
 	
+	def add_call_link(self):
+		return '<a href="/operator/calls/call/add/?citizen=%d">+ обращение</a>' % self.id
+	add_call_link.short_description = "Добавить обращение"
+	add_call_link.allow_tags = True
+	
 	
 	def __unicode__(self):
 		return u"%s, %d г.р." % (self.SNP, self.birthyear)
@@ -35,7 +40,7 @@ class AnswerMan(User):
 	
 	
 	def __unicode__(self):
-		return u"%s %s" % (self.last_name, self.first_name)
+		return u"%s / %s %s" % (self.department, self.last_name, self.first_name)
 
 	
 	class Meta:

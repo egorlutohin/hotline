@@ -4,7 +4,7 @@ from django.contrib import admin
 admin.site.disable_action('delete_selected')
 
 class CitizenAdmin(admin.ModelAdmin):
-	list_display = ('number','SNP', 'birthyear', 'phone', 'address')
+	list_display = ('number','SNP', 'birthyear', 'phone', 'address', 'add_call_link')
 	list_display_links = ('SNP',)
 	search_fields = ['SNP', 'birthyear', 'phone', 'address']
 	exclude = ('last_appeal',)

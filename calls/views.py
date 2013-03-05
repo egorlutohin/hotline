@@ -26,7 +26,7 @@ def feed(request):
 	calls = Call.objects.filter(answer_man=answerman)
 	
 	f = feedgenerator.Atom1Feed(
-		title=u"",
+		title=u"%s: обращения на горячую линию МЗ НСО" % answerman.print_answerman_name(),
 		link=u"",
 		description=u"",
 		language=u"ru",
