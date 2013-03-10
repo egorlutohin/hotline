@@ -1,11 +1,11 @@
 ﻿# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
-
 from django.contrib.syndication.views import Feed
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from hotline.basic_auth import basic_http_auth
-from calls.models import Call
+from calls.models import Call, AnswerMan
 
 def index(request):
 	return HttpResponse('Hello index!')
@@ -19,8 +19,8 @@ def feed(request):
 	user = request.user
 	
 	try:
-		answerman = user.answerman
-	except:
+		answerman = AnswerMan.objects.get(user=user)
+	except AnswerMan.DoesNotExist:
 		raise Http404()
 		
 	calls = Call.objects.filter(answer_man=answerman)
@@ -43,3 +43,13 @@ def feed(request):
 		)	
 	
 	return HttpResponse(f.writeString('UTF-8'))
+
+
+def allowed_to_answer(user):
+	# TODO!
+	return user.is_active # and user in answer_list
+
+@user_passes_test(allowed_to_answer)
+@login_required
+def answer_index(request):
+	return render(request, 'calls/answer_index.html')

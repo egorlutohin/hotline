@@ -1,0 +1,13 @@
+from django.contrib import admin
+from models import CallProfile, Action, Answer
+
+class AnswerAdmin(admin.ModelAdmin):
+	list_display = ('call_id', 'dt', 'call_contents', 'contents', 'profile', 'action','validity')
+	list_display_links = ('call_id', 'dt',)
+	
+	raw_id_fields = ('call', )
+
+
+admin.site.register(Answer, AnswerAdmin)
+admin.site.register(CallProfile)
+admin.site.register(Action)

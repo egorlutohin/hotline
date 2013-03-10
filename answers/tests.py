@@ -14,6 +14,3 @@ class SimpleTest(TestCase):
         Tests that 1 + 1 always equals 2.
         """
         self.assertEqual(1 + 1, 2)
-
-#TODO
-# 1. Добавить проверку что на views типа "ответы" может заходить только тот кто is_active, и видеть только свои вопросы
