@@ -10,8 +10,8 @@ class CitizenAdmin(admin.ModelAdmin):
 	exclude = ('last_appeal',)
 
 class MOAdmin(admin.ModelAdmin):
-	list_display = ('name_short', 'name_full', 'type')
-	search_fields = ['name_short', 'name_full']
+	list_display = ('name_short', 'name_full', 'info', 'type')
+	search_fields = ('name_short', 'name_full', 'info')
 	
 class CallAdmin(admin.ModelAdmin):
 	exclude = ('operator', 'call_received', 'answer_created')
