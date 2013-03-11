@@ -37,7 +37,7 @@ class Action(models.Model):
 	name = models.CharField("Наименование", max_length=255)
 	
 	def __unicode__(self):
-		return u"%d - %s" % (self.code, self.name)
+		return u"%d - %s..." % (self.code, self.name[:20])
 
 	class Meta:
 		verbose_name = "меру, принятую по результатам рассмотрения"
