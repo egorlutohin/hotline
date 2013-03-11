@@ -3,10 +3,26 @@ from calls.models import Call
 
 ### Answer ###
 
+class CallProfileGroup(models.Model):
+	"Вид профиля обращения"
+	code = models.PositiveIntegerField("Код", unique=True)
+	name = models.CharField("Наименование", max_length=255)
+	
+	def __unicode__(self):
+		return self.name
+		
+	class Meta:
+		verbose_name = "вид профиля обращения"
+		verbose_name_plural = "виды профилей обращения"
+		ordering = ('code', )
+		
+
+
 class CallProfile(models.Model):
 	"Профиль обращения"
 	code = models.PositiveIntegerField("Код обращения", unique=True)
 	name = models.CharField("Наименование", max_length=255)
+	group = models.ForeignKey(CallProfileGroup, verbose_name="Вид профиля обращения")
 	
 	def __unicode__(self):
 		return u"%d - %s" % (self.code, self.name)
@@ -14,7 +30,6 @@ class CallProfile(models.Model):
 	class Meta:
 		verbose_name = "профиль обращения"
 		verbose_name_plural = "профили обращения"
-
 	
 class Action(models.Model):
 	"Меры, принятые по результатам рассмотрения"
