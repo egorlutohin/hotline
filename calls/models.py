@@ -57,7 +57,7 @@ class AnswerMan(models.Model):
 	
 	
 	def __unicode__(self):
-		return u"%s / %s %s" % (self.department.name, self.user.last_name, self.user.first_name)
+		return u"%s / %s" % (self.department.name, self.user.last_name,)
 
 	
 	class Meta:
