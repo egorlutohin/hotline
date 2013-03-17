@@ -38,7 +38,7 @@ def index(request):
 	try:
 		answerman = AnswerMan.objects.get(user=request.user)
 	except AnswerMan.DoesNotExist:
-		raise HttpResponseRedirect('/operator/') # TODO: raise Http403 and may be more informative message...
+		return HttpResponseRedirect('/operator/') # TODO: raise Http403 and may be more informative message...
 	
 	return HttpResponseRedirect('/answer/') #TODO: CLEAR HARDCODE!!!
 
