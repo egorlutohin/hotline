@@ -1,6 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
-Hello world!
 
-<p>{{user}}</p>
+
+
+<h3>Cписок обращений</h3>
+<table class="table table-bordered table-hover">
+<caption></caption>
+<thead>
+<tr class="info">
+<th>Номер обращения</th>
+<th>Дата получения</th>
+<th>Гражданин</th>
+<th>Медицинская организация</th>
+<th>Ответ</th>
+</tr>
+</thead>
+
+<tbody>
+{% for call in calls %}
+{% url 'calls:answer_detail' call.id as call_url %}
+<tr>
+	<td><a href="{{call_url}}">{{call.id}}</a></td>
+	<td><a href="{{call_url}}">{{call.dt|date:"d.m.Y"}}</td>
+	<td><a href="{{call_url}}">{{call.citizen}}</td>
+	<td>{{call.mo}}</td>
+	<td>{% if call.got_answer %}<i class="icon-ok"></i>{% else %}<i class="icon-remove"></i>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
 {% endblock %}

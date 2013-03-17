@@ -37,8 +37,8 @@ class Action(models.Model):
 	name = models.CharField("Наименование", max_length=255)
 	
 	def __unicode__(self):
-		return u"%d - %s..." % (self.code, self.name[:20])
-
+		return u"%d - %s" % (self.code, self.name)
+	
 	class Meta:
 		verbose_name = "меру, принятую по результатам рассмотрения"
 		verbose_name_plural = "меры, принятые по результатам рассмотрения"
@@ -56,11 +56,21 @@ class Answer(models.Model):
 	
 	def call_contents(self):
 		return self.call.contents
-	call_contents.short_description = "содержание обращения"
+	call_contents.short_description = "Содержание обращения"
 	
 	def call_id(self):
 		return self.call.id
 	call_id.short_description = "Номер обращения"
+	
+	def action_short_name(self):
+		MAX_LEN = 25
+		name = unicode(self.action)
+		if len(name) > MAX_LEN:
+			return name[:MAX_LEN] + u"..."
+		else:
+			return name
+	action_short_name.short_description = "Меры"
+
 
 	
 	def __unicode__(self):
@@ -74,7 +84,9 @@ class Answer(models.Model):
 	
 	
 	def save(self, *args, **kwargs):
+		super(Answer, self).save(*args, **kwargs)
+		
 		self.call.answer_created = self.dt
 		self.call.save()
-		super(Answer, self).save(*args, **kwargs)
+		
 

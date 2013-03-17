@@ -46,16 +46,12 @@
   <body>
 
     <div class="container">
-    <form  class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">{% csrf_token %}
-    {% if form.errors %}
-	<p class="error">Такого пользователя не существует, или неправильный пароль. Либо у вас нет доступа к данному разделу.</p>
-    {% endif %}
-        <h3 class="form-signin-heading">Горячая линия МЗ НСО</h2>
-        <input type="text" name="{{ form.username.html_name }}" class="input-block-level" placeholder="{{ form.username.label }}"{% if form.username.value %} value="{{form.username.value}}"{% endif %}>
-        <input type="password" name="{{form.password.html_name}}" class="input-block-level" placeholder="{{ form.password.label }}">
-	<input type="hidden" name="next" value="{{ next }}" />
-        <button class="btn btn-large btn-primary" type="submit">Войти</button>
-      </form>
+    <form  class="form-signin">
+	<p align="center">
+		<strong>Сеанс работы завершен.</strong>
+	</p>
+	<p align="center">Вы можете <a href="/">перейти на главную</a> страницу или повторно <a href="{% url 'login' %}">войти в систему</a>.</p>
+    </form>
     </div> <!-- /container -->
   </body>
 </html>

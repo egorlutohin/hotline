@@ -139,15 +139,14 @@ class Call(models.Model):
 	add_or_change_answer_link.short_description = "Добавить/изменить ответ"
 	add_or_change_answer_link.allow_tags = True
 	
+	def get_answer(self):
+		try:
+			return self.answer
+		except:
+			return None
+
+	
 	def got_answer(self):
-		#~ try:
-			#~ self.answer
-			#~ return True
-		#~ except:
-			#~ return False
-		
-		# Интересно, какой кусок кода лучше?
-		
 		if self.answer_created:
 			return True
 		else:

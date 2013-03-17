@@ -6,5 +6,8 @@ urlpatterns = patterns('',
     # url(r'^hotline/', include('hotline.foo.urls')),
     url(r'^$', views.index, name='index'),
     url(r'^feed/$', views.feed, name='feed'),
-    url(r'^answer/$', views.answer_index, name='answer' )
+    url(r'^answer/$', views.answer_index, name='answers'),
+    url(r'^answer/(?P<call_id>\d)/$', views.answer_detail, name='answer_detail'),
+    url(r'^answer/ajax/mo/$', views.ajax_mo, name="ajax_mo"),
+    url(r'^answer/ajax/contents/$', views.ajax_contents, name="ajax_contents"),
 )
