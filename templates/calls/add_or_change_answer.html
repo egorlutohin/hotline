@@ -117,11 +117,11 @@ $.ajaxSetup({
 
 <div id="call">
 <table>
- <tr><th>Дата, время</th><td>{{call.dt|date:"d.m.Y, G:i"}}</dd></tr>
+ <tr><th width="225">Дата, время</th><td>{{call.dt|date:"d.m.Y, G:i"}}</dd></tr>
  <tr><th>Гражданин</th><td>{{call.citizen}}</dd></tr>
  <tr><th>Контактный телефон</th><td>{{call.citizen.phone}}</dd></tr>
  <tr><th>Медицинская организация <button class="btn btn-mini btn-link" title="Изменить мед. организацию" role="button" data-toggle="modal" data-target="#changeMOModal"><i class="icon-pencil"></i></button></th><td id="__mo">{{call.mo}}</dd></tr>
- <tr><th>Текст <button class="btn btn-mini btn-link" title="Изменить текст обращения" role="button" data-toggle="modal" data-target="#changeContentsModal"><i class="icon-pencil" ></i></button></th><td id="__contents" style="white-space: pre;">{{call.contents}}</td></tr>
+ <tr><th>Текст <button class="btn btn-mini btn-link" title="Изменить текст обращения" role="button" data-toggle="modal" data-target="#changeContentsModal"><i class="icon-pencil" ></i></button></th><td id="__contents" style="white-space: pre-wrap;">{{call.contents}}</td></tr>
 </table>
 
 </div>
