@@ -122,11 +122,12 @@ def answer_detail(request, call_id):
 		
 		answer = call.get_answer()
 		
-		if answer:
+		if answer: # TODO: cool refactoring!!!
 			#update
 			answer_form = AnswerModelForm(request.POST, instance=answer)
 			if answer_form.is_valid():
 				answer = answer_form.save(commit=False)
+				answer.dt = timezone.now()
 				answer.save()
 				return HttpResponseRedirect(reverse('calls:answers'))
 
@@ -136,6 +137,7 @@ def answer_detail(request, call_id):
 			if answer_form.is_valid():
 				answer = answer_form.save(commit=False)
 				answer.call = call
+				answer.dt = timezone.now()
 				answer.save()
 				return HttpResponseRedirect(reverse('calls:answers'))
 	else:

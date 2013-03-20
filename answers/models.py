@@ -89,4 +89,11 @@ class Answer(models.Model):
 		self.call.answer_created = self.dt
 		self.call.save()
 		
+class Reason(models.Model):
+	"Причина ответа не в срок"
+	call = models.OneToOneField(Call, primary_key=True, verbose_name="Обращение")
+	text = models.TextField("Причина ответа не в срок")
+	
+	def __unicode__(self):
+		return u"Причина ответа не в срок на обращение #%d" % self.call.id
 

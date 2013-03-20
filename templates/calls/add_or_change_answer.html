@@ -129,13 +129,6 @@ $.ajaxSetup({
 <div id="answer">
  <h3>Ответ на {{call}}</h3>
  <form action="." method="POST">{% csrf_token %}
-   <div class="input-append">
-   {{answer_form.dt.label_tag}}
-   {{answer_form.dt}}<span class="add-on"><i class="icon-calendar" title="Введите дату в формате: дд.мм.гггг чч:мм:сс"></i></span></div>
-   <div class="input-append">
-	<label>&nbsp;</label>
-	<a class="btn btn-link" onclick="$('#id_dt').val(now());">Сейчас</a>
-   </div>
    {% if answer_form.dt.errors %}<p class="text-error">{{answer_form.dt.errors|join:' '}}</p>{% endif %}
    
    {{answer_form.contents.label_tag}}

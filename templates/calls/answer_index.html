@@ -1,30 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
-
-
+<style type="text/css">
+  thead tr.info th {vertical-align: top;}
+</style>
 
 <h3>Cписок обращений</h3>
 <table class="table table-bordered table-hover">
 <caption></caption>
 <thead>
 <tr class="info">
-<th>Номер обращения</th>
-<th>Дата получения</th>
+<th>&nbsp;</th>
+<th>Номер<br /> обращения</th>
+<th>Дата получения<br /> обращения</th>
+<th>Дата направления<br />ответа</th>
 <th>Гражданин</th>
 <th>Медицинская организация</th>
-<th>Ответ</th>
 </tr>
 </thead>
 
 <tbody>
 {% for call in calls %}
 {% url 'calls:answer_detail' call.id as call_url %}
-<tr>
+<tr class="{% if call.got_answer and not call.is_outdated %}success{% elif not call.got_answer and not call.is_outdated %}warning{% elif not call.got_answer and call.is_outdated %}error{% endif %}">
+	<td>{% if call.got_answer %}<i class="icon-ok"></i>{% else %}<i class="icon-remove"></i>{% endif %}</td>
 	<td><a href="{{call_url}}">{{call.id}}</a></td>
-	<td><a href="{{call_url}}">{{call.dt|date:"d.m.Y"}}</td>
+	<td><a href="{{call_url}}">{{call.dt|date:"d.m.Y H:i"}}</td>	
+	<td><a href="{{call_url}}">{{call.answer_created|date:"d.m.Y H:i"}}</td>		
 	<td><a href="{{call_url}}">{{call.citizen}}</td>
 	<td>{{call.mo}}</td>
-	<td>{% if call.got_answer %}<i class="icon-ok"></i>{% else %}<i class="icon-remove"></i>{% endif %}</td>
+
+
 </tr>
 {% endfor %}
 </tbody>

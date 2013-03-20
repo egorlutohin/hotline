@@ -9,7 +9,7 @@ def _clean_dt(dt):
 	
 	return d
 
-def is_work_day(dt):
+def is_workday(dt):
 	d = _clean_dt(dt)	
 
 	try:
@@ -25,13 +25,14 @@ def is_work_day(dt):
 		else:
 			return True
 
-def next_work_day(dt):
+def next_workday(dt):
 	d = _clean_dt(dt)
 	one_day = timedelta(days=1)
 	
-	next_day = d + one_day
-	while not is_work_day(next_day):
-		next_day = next_day + one_day
+	while True:
+		next_day = d + one_day
+		if is_workday(next_day):
+			break
 	
 	return next_day
 	

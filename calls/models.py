@@ -2,6 +2,8 @@
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+import workcalendar
+
 ### Question ###
 
 class Citizen(models.Model):
@@ -30,6 +32,7 @@ class Citizen(models.Model):
 	class Meta:
 		verbose_name = "гражданина"
 		verbose_name_plural = "граждане"
+		unique_together = ('SNP', 'birthyear', 'phone')
 
 class Department(models.Model):
 	"Отдел"
@@ -63,6 +66,7 @@ class AnswerMan(models.Model):
 	class Meta:
 		verbose_name = "ответственного за подготовку ответа"
 		verbose_name_plural = "Ответственные за подготовку ответа"
+		unique_together = ('department', 'user')
 	
 class MO(models.Model):
 	"Медицинская организация"
@@ -87,7 +91,7 @@ class MO(models.Model):
 			return c
 	
 	name_short = models.CharField("Короткое название", max_length=200)
-	name_full = models.CharField("Полное название", max_length=200, null=True, blank=True)
+	name_full = models.TextField("Полное название", null=True, blank=True)
 	type = models.PositiveIntegerField("Тип организации", choices=TYPE.choices())
 	info = models.TextField("Дополнительная информация", help_text="Например: адрес, телефон, контактное лицо", null=True, blank=True)
 	
@@ -107,8 +111,18 @@ class Call(models.Model):
 	contents = models.TextField("Содержание сообщения")
 	answer_man = models.ForeignKey(AnswerMan, verbose_name="Ответственный за подготовку ответа")
 	
+	deadline = models.DateField("Крайний срок исполнения ответа", blank=True)
 	call_received = models.DateTimeField("Дата и время получения обращения", null=True, blank=True)
 	answer_created = models.DateTimeField("Дата и время получения ответа", null=True, blank=True)
+	
+	def is_outdated(self):
+		now = timezone.now()
+		deadline = timezone.datetime(self.deadline.year, self.deadline.month, self.deadline.day, 23, 59, 59)
+		#bug here!!!
+		if (now > deadline) or ((self.answer_created is not None) and (self.answer_created > deadline)):
+			return True
+		else:
+			return False
 	
 	def __unicode__(self):
 		return u"Обращение #%d" % (self.number())
@@ -143,6 +157,12 @@ class Call(models.Model):
 			return self.answer
 		except:
 			return None
+			
+	def get_reason(self):
+		try:
+			return self.reason
+		except:
+			return None
 
 	
 	def got_answer(self):
@@ -150,7 +170,7 @@ class Call(models.Model):
 			return True
 		else:
 			return False
-	got_answer.short_description = "Ответ получен"
+	got_answer.short_description = "Ответ"
 	got_answer.boolean = True
 	got_answer.admin_order_field = 'answer_created'
 	
@@ -159,12 +179,29 @@ class Call(models.Model):
 			return True
 		else:
 			return False
-	got_read_confirmation.short_description = "Ответ прочитан"
+	got_read_confirmation.short_description = "Прочитано"
 	got_read_confirmation.boolean = True
 	got_read_confirmation.admin_order_field = 'call_received'
+	
+	def save(self, *args, **kwargs):
+		if self.deadline == None:
+			deadline = None
+			if workcalendar.is_workday(self.dt):
+				deadline = workcalendar.next_workday(self.dt)
+			else:
+				deadline = workcalendar.next_workday(workcalendar.next_workday(self.dt))
+			self.deadline = deadline
+		
+		if self.answer_created and not(self.call_received):
+			self.call_received = self.answer_created
+		
+		super(Call, self).save(*args, **kwargs)
+
 
 		
 	class Meta:
 		ordering = ['-id']
 		verbose_name = "обращение по телефону"
 		verbose_name_plural = "обращения по телефону"
+		
+	
