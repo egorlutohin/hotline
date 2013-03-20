@@ -110,8 +110,6 @@ class Call(models.Model):
 	call_received = models.DateTimeField("Дата и время получения обращения", null=True, blank=True)
 	answer_created = models.DateTimeField("Дата и время получения ответа", null=True, blank=True)
 	
-	
-	
 	def __unicode__(self):
 		return u"Обращение #%d" % (self.number())
 		
@@ -132,12 +130,13 @@ class Call(models.Model):
 		try:
 			self.answer
 			#изменить ответ
-			return '<a href="/operator/answers/answer/%d/">изменить ответ</a>' % self.id
+			return '<a href="/operator/answers/answer/%d/">изменить</a>' % self.id
 		except:
 			# добавить ответ
-			return '<a href="/operator/answers/answer/add/?call=%d">добавить ответ</a>' % self.id
-	add_or_change_answer_link.short_description = "Добавить/изменить ответ"
+			return '<a href="/operator/answers/answer/add/?call=%d">добавить</a>' % self.id
+	add_or_change_answer_link.short_description = "Ответ"
 	add_or_change_answer_link.allow_tags = True
+
 	
 	def get_answer(self):
 		try:
@@ -153,6 +152,7 @@ class Call(models.Model):
 			return False
 	got_answer.short_description = "Ответ получен"
 	got_answer.boolean = True
+	got_answer.admin_order_field = 'answer_created'
 	
 	def got_read_confirmation(self):
 		if self.call_received:
@@ -161,6 +161,7 @@ class Call(models.Model):
 			return False
 	got_read_confirmation.short_description = "Ответ прочитан"
 	got_read_confirmation.boolean = True
+	got_read_confirmation.admin_order_field = 'call_received'
 
 		
 	class Meta:

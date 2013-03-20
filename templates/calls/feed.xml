@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+	<channel>
+		<title>{{ user.last_name }} {{ user.first_name }}: обращения на горячую линию МЗ НСО</title>
+		<link>{{url}}{% url "calls:answers" %}</link>
+		<description>Список обращений на горячую линиз МЗ НСО, ответственным за ответ на эти обращения назначен {{user.first_name}} {{user.last_name}}.</description>
+		<ttl>{{ttl}}</ttl>
+		{% for call in calls %}
+		<item>
+			<title>{{call}} от {{call.citizen}}</title>
+			<link>{{url}}{% url "calls:answer_detail" call.id %}</link>
+			<description><![CDATA[
+				<div><strong>Адрес:</strong> {{call.citizen.address}}</div>
+				<div><strong>Телефон:</strong> {{call.citizen.phone}}</div>
+				<div>{{call.contents|linebreaks}}</div>
+				<img src="{{url}}/feed/confirm/{{call.id}}/{{call.secret}}.png" width="1" height="1" alt="" style="visibility: hidden" />
+			]]></description>
+			<guid>MH-NSO:HOTLINE:CALL:{{call.id}}</guid>
+			<pubDate>{{call.dt_rfc}}</pubDate>
+		</item>
+		{% endfor %}
+		
+	</channel>
+</rss>

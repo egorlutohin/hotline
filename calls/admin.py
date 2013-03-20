@@ -16,9 +16,13 @@ class MOAdmin(admin.ModelAdmin):
 class CallAdmin(admin.ModelAdmin):
 	exclude = ('operator', 'call_received', 'answer_created')
 	list_display = ('number', 'citizen', 'mo', 'dt', 'answer_man', 'print_operator_name', 
-	                    'got_answer' , 'got_read_confirmation', 'add_or_change_answer_link')
+	                    'got_read_confirmation',  'got_answer' , 'add_or_change_answer_link')
 	list_display_links = ('citizen',)
 	raw_id_fields = ('citizen',)
+	
+	date_hierarchy = 'dt'
+	
+	list_filter = ('dt',)
 	
 	def save_model(self, request, obj, form, change):
 		if not change:

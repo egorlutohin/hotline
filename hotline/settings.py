@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     #'django.contrib.admindocs',
     'calls',
     'answers',
+    'workcalendar',
 )
 
 # A sample logging configuration. The only tangible logging
