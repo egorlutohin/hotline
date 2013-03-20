@@ -1,4 +1,4 @@
-# Django settings for hotlie project.
+﻿# Django settings for hotlie project.
 
 import os
 
@@ -82,9 +82,6 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = '_8is^v4xlm(qb0j_bxsu)2%f7fb5$816z*u%1re(oj9@&amp;iva$r'
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -117,7 +114,7 @@ TEMPLATE_DIRS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
 	"django.contrib.auth.context_processors.auth",
-	"django.core.context_processors.debug",
+	#~ "django.core.context_processors.debug",
 	"django.core.context_processors.i18n",
 	"django.core.context_processors.media",
 	"django.core.context_processors.static",
@@ -173,5 +170,13 @@ LOGGING = {
 LOGIN_REDIRECT_URL='/'
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
+
+# ttl rss 2.0 для поступивших обращений на горячую линию в минутах
+RSS_FEED_TTL = 10 
+ITEMS_IN_FEED = 100
+SERVER_URL = '' # eg. http://hotline.ru без завершающего слэша
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '_8is^v4xlm(qb0j_bxsu)2%f7fb5$816z*u%1re(oj9@&amp;iva$r'
+
 
 from localsettings import *

@@ -4,13 +4,16 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib.syndication.views import Feed
 from django.contrib.auth.decorators import login_required, user_passes_test
 
-from hotline.basic_auth import basic_http_auth
+from hotline.basic_auth import basic_http_auth, _auth_required_response
 from calls.models import Call, AnswerMan, MO
 from calls.forms import CallModelForm, AnswerModelForm
 from django.core.urlresolvers import reverse
 
 from django.views.decorators.csrf import ensure_csrf_cookie
 
+from django.core.exceptions import PermissionDenied # HTTP 403 Exception
+from django.conf import settings
+from django.utils import timezone
 
 ########## UTILS
 
@@ -35,6 +38,7 @@ def user_is_active(user):
 
 @login_required
 def index(request):
+	# TODO: more cool function
 	try:
 		answerman = AnswerMan.objects.get(user=request.user)
 	except AnswerMan.DoesNotExist:
@@ -42,40 +46,52 @@ def index(request):
 	
 	return HttpResponseRedirect('/answer/') #TODO: CLEAR HARDCODE!!!
 
+from hashlib import md5
+def _gen_secret(n):
+	SK = settings.SECRET_KEY
+	sk_half_size = len(SK) / 2
+	return md5('%d%s%d' % (n, md5(SK[:sk_half_size]).hexdigest(), n)).hexdigest() 
 
-from django.utils import feedgenerator
-
-@user_passes_test(user_is_active)
 @basic_http_auth
 def feed(request):
 	
-	user = request.user
-	try:
-		answerman = AnswerMan.objects.get(user=user)
-	except AnswerMan.DoesNotExist:
-		raise Http404()
-		
-	calls = Call.objects.filter(answer_man=answerman)
-	
-	f = feedgenerator.Atom1Feed(
-		title=u"%s: обращения на горячую линию МЗ НСО" % answerman.print_answerman_name(),
-		link=u"",
-		description=u"",
-		language=u"ru",
-		author_name=u"",
-		feed_url=u""
-	)
-	
-	
-	for call in calls:
-		f.add_item(title=u"Обращение #%d от %s" % (call.number(), call.citizen),
-			link=u"request #%d" %  call.number(),
-			pubdate=call.dt,
-			description=call.contents
-		)	
-	
-	return HttpResponse(f.writeString('UTF-8'))
+	ITEMS_IN_FEED = settings.ITEMS_IN_FEED
+	TTL = settings.RSS_FEED_TTL
+	URL = settings.SERVER_URL
 
+	try:
+		answerman = AnswerMan.objects.get(user=request.user)
+	except AnswerMan.DoesNotExist:
+		return _auth_required_response()
+		
+	calls = Call.objects.select_related('citizen', 'mo').filter(answer_man=answerman)[:ITEMS_IN_FEED]
+	
+	for c in calls:
+		c.dt_rfc = c.dt.strftime('%a, %d %b %Y %H:%M:%S %z')
+		c.secret = _gen_secret(c.id)
+	
+	return render(request, 'calls/feed.xml', {'calls': calls, 'ttl': TTL, 'url': URL},  content_type='application/rss+xml')
+	
+
+def feed_read_confirmation(request, call_id, digest):
+	try:
+		call_id = int(call_id)
+		if not (digest == _gen_secret(call_id)):
+			raise
+	except:
+		raise PermissionDenied()
+	
+	try:
+		call = Call.objects.get(pk=call_id)
+	except Call.DoesNotExist:
+		raise Http404()
+
+	call.call_received = timezone.now()
+	call.save()
+		
+	return HttpResponse(content_type="image/png")
+	
+	
 
 
 @user_passes_test(user_is_active)
@@ -84,7 +100,7 @@ def answer_index(request):
 	try:
 		answerman = AnswerMan.objects.get(user=request.user)
 	except AnswerMan.DoesNotExist:
-		raise Http404() # TODO: raise Http403 and may be more informative message...
+		raise PermissionDenied()
 	
 	calls = Call.objects.select_related('citizen', 'mo').filter(answer_man = answerman)
 	
@@ -98,13 +114,9 @@ def answer_detail(request, call_id):
 	
 	try:
 		answerman = AnswerMan.objects.get(user=request.user)
-	except AnswerMan.DoesNotExist:
-		raise Http404() # TODO: raise Http403 and may be more informative message...
-		
-	try:
 		call = Call.objects.select_related('citizen', 'mo').get(answer_man=answerman, pk=call_id)
-	except Call.DoesNotExist:
-		raise Http404() # TODO: raise may be more informative message...
+	except (Call.DoesNotExist, AnswerMan.DoesNotExist):
+		raise PermissionDenied('Вам не положено видеть эту страницу!')
 		
 	if request.method == "POST":
 		

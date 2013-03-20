@@ -153,6 +153,14 @@ class Call(models.Model):
 			return False
 	got_answer.short_description = "Ответ получен"
 	got_answer.boolean = True
+	
+	def got_read_confirmation(self):
+		if self.call_received:
+			return True
+		else:
+			return False
+	got_read_confirmation.short_description = "Ответ прочитан"
+	got_read_confirmation.boolean = True
 
 		
 	class Meta:

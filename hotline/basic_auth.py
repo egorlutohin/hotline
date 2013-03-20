@@ -5,7 +5,12 @@ import base64
 
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-
+def _auth_required_response():
+	r = HttpResponse("Auth Required", status = 401)
+	r['WWW-Authenticate'] = 'Basic realm=""'
+	return r
+	
+	
 def basic_http_auth(f):
 	def wrap(request, *args, **kwargs):
 		if request.META.get('HTTP_AUTHORIZATION', False):
@@ -14,15 +19,11 @@ def basic_http_auth(f):
 			username, password = auth.split(':')
 			user = authenticate(username=username, password=password)
 			if user is not None and user.is_active:
-				login(request, user)
+				#~ login(request, user)
 				request.user = user
 				return f(request, *args, **kwargs)
 			else:
-				r = HttpResponse("Auth Required", status = 401)
-				r['WWW-Authenticate'] = 'Basic realm=""'
-				return r
-		r = HttpResponse("Auth Required", status = 401)
-		r['WWW-Authenticate'] = 'Basic realm=""'
-		return r
+				return _auth_required_response()
+		return _auth_required_response()
 
 	return wrap

@@ -15,7 +15,8 @@ class MOAdmin(admin.ModelAdmin):
 	
 class CallAdmin(admin.ModelAdmin):
 	exclude = ('operator', 'call_received', 'answer_created')
-	list_display = ('number', 'citizen', 'mo', 'contents','dt', 'answer_man', 'print_operator_name', 'got_answer' ,'add_or_change_answer_link')
+	list_display = ('number', 'citizen', 'mo', 'dt', 'answer_man', 'print_operator_name', 
+	                    'got_answer' , 'got_read_confirmation', 'add_or_change_answer_link')
 	list_display_links = ('citizen',)
 	raw_id_fields = ('citizen',)
 	
