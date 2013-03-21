@@ -80,6 +80,16 @@ class Answer(models.Model):
 	class Meta:
 		verbose_name = "ответ на обращение по телефону"
 		verbose_name_plural = "ответы на обращения по телефону"
+		
+	
+	def delete(self, *args, **kwargs):
+		try:
+			self.call.call_received = None
+			self.call.answer_created = None
+			self.call.save()
+		except:
+			pass
+		super(Answer, self).delete(*args, **kwargs)
 
 	
 	

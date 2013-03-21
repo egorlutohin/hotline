@@ -20,17 +20,17 @@ class CallAdmin(admin.ModelAdmin):
 		}),
 		('Контрольные даты', {
 			'classes': ('collapse',),		
-			'fields':  ('deadline', 'call_received', 'answer_created'),
+			'fields':  ('deadline', 'call_received',),
 		}),
 	)
 	
-	list_display = ('number', 'citizen', 'mo', 'dt', 'answer_man', 'print_operator_name', 
+	list_display = ('number', 'citizen', 'mo', 'dt', 'deadline', 'answer_man', 'print_operator_name', 
 	                    'got_read_confirmation',  'got_answer' , 'add_or_change_answer_link')
 	list_display_links = ('citizen',)
 	raw_id_fields = ('citizen', 'mo')
 	
 	date_hierarchy = 'dt'
-	list_filter = ('dt',)
+	#~ list_filter = ('dt',)
 	
 	def save_model(self, request, obj, form, change):
 		if not change:

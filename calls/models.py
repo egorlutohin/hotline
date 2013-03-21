@@ -111,15 +111,16 @@ class Call(models.Model):
 	contents = models.TextField("Содержание сообщения")
 	answer_man = models.ForeignKey(AnswerMan, verbose_name="Ответственный за подготовку ответа")
 	
-	deadline = models.DateField("Крайний срок исполнения ответа", blank=True)
+	deadline = models.DateTimeField("Крайний срок направления ответа", blank=True)
 	call_received = models.DateTimeField("Дата и время получения обращения", null=True, blank=True)
 	answer_created = models.DateTimeField("Дата и время получения ответа", null=True, blank=True)
 	
 	def is_outdated(self):
 		now = timezone.now()
-		deadline = timezone.datetime(self.deadline.year, self.deadline.month, self.deadline.day, 23, 59, 59)
-		#bug here!!!
-		if (now > deadline) or ((self.answer_created is not None) and (self.answer_created > deadline)):
+		deadline = self.deadline
+		answer_created = self.answer_created
+
+		if (now > deadline) or ((answer_created is not None) and (answer_created > deadline)):
 			return True
 		else:
 			return False
@@ -185,11 +186,12 @@ class Call(models.Model):
 	
 	def save(self, *args, **kwargs):
 		if self.deadline == None:
-			deadline = None
 			if workcalendar.is_workday(self.dt):
-				deadline = workcalendar.next_workday(self.dt)
+				d = workcalendar.next_workday(self.dt)
 			else:
-				deadline = workcalendar.next_workday(workcalendar.next_workday(self.dt))
+				d = workcalendar.next_workday(workcalendar.next_workday(self.dt))
+				
+			deadline = timezone.datetime(year = d.year, month = d.month, day = d.day, hour = 23, minute = 59, second = 59)
 			self.deadline = deadline
 		
 		if self.answer_created and not(self.call_received):
