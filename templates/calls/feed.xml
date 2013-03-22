@@ -10,7 +10,7 @@
 			<title>{{call}} от {{call.citizen}}</title>
 			<link>{{url}}{% url "calls:answer_detail" call.id %}</link>
 			<description><![CDATA[
-				<div><strong>Крайний срок правления ответа:</strong> {{call.deadline}}</div>
+				<div><strong>Крайний срок направления ответа:</strong> {{call.deadline}}</div>
 				<div><strong>Адрес:</strong> {{call.citizen.address}}</div>
 				<div><strong>Телефон:</strong> {{call.citizen.phone}}</div>
 				<div>{{call.contents|linebreaks}}</div>
