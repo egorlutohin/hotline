@@ -86,8 +86,9 @@ def feed_read_confirmation(request, call_id, digest):
 	except Call.DoesNotExist:
 		raise Http404()
 
-	call.call_received = timezone.now()
-	call.save()
+	if not call.call_received:
+		call.call_received = timezone.now()
+		call.save()
 		
 	return HttpResponse(content_type="image/png")
 	
