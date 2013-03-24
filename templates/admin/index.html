@@ -17,9 +17,7 @@
         <div class="module">
         <table>
         <caption>
-            <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">
                 {% blocktrans with name=app.name %}{{ name }}{% endblocktrans %}
-            </a>
         </caption>
         {% for model in app.models %}
             <tr>

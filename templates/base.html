@@ -35,10 +35,10 @@
             <p class="navbar-text pull-right">
               Дорбо пожаловать, <strong>{{user.first_name}}</strong>. <a href="{% url 'logout'%}" class="navbar-link">Выйти</a>
             </p>
-	    <ul class="nav">
+	    <!--ul class="nav">
 	      {%url 'calls:answers' as answers_url%}
               <li{% if request.path == answers_url %} class="active"{% endif %}><a href="{{answers_url}}">Обращения</a></li>
-	    </ul>
+	    </ul-->
           </div><!--/.nav-collapse -->
         </div>
       </div>

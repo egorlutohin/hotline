@@ -10,7 +10,6 @@ class CallModelForm(ModelForm):
 class AnswerModelForm(ModelForm):
 	class Meta:
 		model = Answer
-		#~ fields = ('mo', 'contents')
 		exclude = ('call', 'dt')
 		
 class ReasonModelForm(ModelForm):

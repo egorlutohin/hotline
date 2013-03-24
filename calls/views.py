@@ -38,13 +38,7 @@ def user_is_active(user):
 
 @login_required
 def index(request):
-	# TODO: more cool function
-	try:
-		answerman = AnswerMan.objects.get(user=request.user)
-	except AnswerMan.DoesNotExist:
-		return HttpResponseRedirect('/operator/') # TODO: raise Http403 and may be more informative message...
-	
-	return HttpResponseRedirect('/answer/') #TODO: CLEAR HARDCODE!!!
+	return answer_index(request)
 
 from hashlib import md5
 def _gen_secret(n):
@@ -101,7 +95,7 @@ def answer_index(request):
 	try:
 		answerman = AnswerMan.objects.get(user=request.user)
 	except AnswerMan.DoesNotExist:
-		raise PermissionDenied()
+		return HttpResponseRedirect(settings.LOGIN_URL)
 	
 	calls = Call.objects.select_related('citizen', 'mo').filter(answer_man = answerman)
 	
