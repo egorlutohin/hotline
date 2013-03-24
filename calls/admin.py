@@ -1,7 +1,10 @@
 ﻿from models import Citizen, Call, MO, AnswerMan, Department
 from django.contrib import admin
+from django.utils import timezone
+import workcalendar
 
 admin.site.disable_action('delete_selected')
+
 
 class CitizenAdmin(admin.ModelAdmin):
 	list_display = ('number','SNP', 'birthyear', 'phone', 'address', 'add_call_link')
@@ -12,6 +15,37 @@ class CitizenAdmin(admin.ModelAdmin):
 class MOAdmin(admin.ModelAdmin):
 	list_display = ('name_short', 'name_full', 'info', 'type')
 	search_fields = ('name_short', 'name_full', 'info')
+	
+from django.contrib.admin import SimpleListFilter
+
+class CallsFilter(SimpleListFilter):
+	title = ''
+	parameter_name = 'notifications'
+	
+	def lookups(self, request, model_admin):
+		return (
+			('1', 'Обращение не прочитано'),		
+			('2', 'Обращение не прочитано более 3 часов'),
+			('3', 'Обращение прочитано'),
+			('4', 'Ответ не получен'),
+			('5', 'Ответ не получен, время вышло'),
+			('6', 'Ответ получен'),
+		)
+	def queryset(self, request, queryset):
+		if self.value() == '1':
+			return queryset.filter(call_received__isnull=True)
+		elif self.value() == '2':
+			offset_3hours = timezone.now() - timezone.timedelta(hours=3)
+			return queryset.filter(call_received__isnull=True, dt__lt=offset_3hours)
+		elif self.value() == '3':
+			return queryset.filter(call_received__isnull=False)
+		elif self.value() == '4':
+			return queryset.filter(answer_created__isnull=True)
+		elif self.value() == '5':
+			now = timezone.now()
+			return queryset.filter(answer_created__isnull=True, deadline__lt=now)
+		elif self.value() == '6':
+			return queryset.filter(answer_created__isnull=False)
 	
 class CallAdmin(admin.ModelAdmin):
 	fieldsets = (
@@ -30,7 +64,7 @@ class CallAdmin(admin.ModelAdmin):
 	raw_id_fields = ('citizen', 'mo')
 	
 	date_hierarchy = 'dt'
-	#~ list_filter = ('dt',)
+	list_filter = (CallsFilter, )
 	
 	def save_model(self, request, obj, form, change):
 		if not change:
