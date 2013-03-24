@@ -141,6 +141,15 @@ $.ajaxSetup({
    {{answer_form.action}}
    {% if answer_form.action.errors %}<p class="text-error">{{answer_form.action.errors|join:' '}}</p>{% endif %}
    <label class="checkbox">{{answer_form.validity}} {{answer_form.validity.label}}</label>
+   {% if call.is_outdated %}
+   <hr />
+   <div class="alert">
+	Т.к. ответ не был внесен до <strong>{{call.deadline | date:"d.m.Y, G:i"}}</strong>, укажите причину направления ответа не в срок.
+   </div>
+   {{reason_form.text.label_tag}}
+   {{reason_form.text}}
+   <p class="text-error">{{reason_form.text.errors|join:' '}}</p>
+   {% endif %}
    <div class="form-actions">
 	<button type="submit" class="btn btn-primary pull-right">Сохранить</button>
    </div>
@@ -156,7 +165,7 @@ $.ajaxSetup({
       <h3>Изменение мед. организации</h3>
   </div>
   <div class="modal-body">
-	{{ form.mo }}
+	{{ call_form.mo }}
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary" onclick="return changeMO(this)">Сохранить</button>  
@@ -170,7 +179,7 @@ $.ajaxSetup({
       <h3>Изменение текста обращения</h3>
   </div>
   <div class="modal-body">
-	{{ form.contents }}
+	{{ call_form.contents }}
   </div>
   <div class="modal-footer">
     <button class="btn btn-primary" onclick="return changeContents(this)">Сохранить</button>  

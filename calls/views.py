@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from hotline.basic_auth import basic_http_auth, _auth_required_response
 from calls.models import Call, AnswerMan, MO
-from calls.forms import CallModelForm, AnswerModelForm
+from calls.forms import CallModelForm, AnswerModelForm, ReasonModelForm
 from django.core.urlresolvers import reverse
 
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -113,37 +113,43 @@ def answer_detail(request, call_id):
 	except (Call.DoesNotExist, AnswerMan.DoesNotExist):
 		raise PermissionDenied('Вам не положено видеть эту страницу!')
 		
+	reason_form = None
+	answer_form = None
+		
 	if request.method == "POST":
-		
-		answer = call.get_answer()
-		
-		if answer: # TODO: cool refactoring!!!
-			#update
-			answer_form = AnswerModelForm(request.POST, instance=answer)
-			if answer_form.is_valid():
-				answer = answer_form.save(commit=False)
-				answer.dt = timezone.now()
+		#update or create
+		answer_form = AnswerModelForm(request.POST, instance=call.get_answer())
+		if answer_form.is_valid():
+			answer = answer_form.save(commit=False)
+			answer.call = call
+			answer.dt = timezone.now()
+			call.answer_created = answer.dt # hack
+			
+			if call.is_outdated(): # there must be a reason!
+				reason_form = ReasonModelForm(request.POST, instance=call.get_reason())
+				if reason_form.is_valid():
+					reason = reason_form.save(commit=False)
+					reason.call = call
+					
+					reason.save()
+					answer.save()
+					
+					return HttpResponseRedirect(reverse('calls:answers'))
+			else:
 				answer.save()
+				
 				return HttpResponseRedirect(reverse('calls:answers'))
-
-		else:
-			#create
-			answer_form = AnswerModelForm(request.POST)
-			if answer_form.is_valid():
-				answer = answer_form.save(commit=False)
-				answer.call = call
-				answer.dt = timezone.now()
-				answer.save()
-				return HttpResponseRedirect(reverse('calls:answers'))
-	else:
-		try:
-			call.answer
-			answer_form = AnswerModelForm(instance=call.answer)
-		except:
-			answer_form = AnswerModelForm()
+	
+	if not answer_form:
+		answer_form = AnswerModelForm(instance=call.get_answer())
+	
+	if not reason_form:
+		reason_form = ReasonModelForm(instance=call.get_reason())
 	
 	call_form = CallModelForm(instance=call)	
-	return render(request, 'calls/add_or_change_answer.html', {'call': call, 'form': call_form, 'answer_form': answer_form})
+	return render(request, 'calls/add_or_change_answer.html', {'call': call, 'call_form': call_form, 'answer_form': answer_form, 'reason_form': reason_form})
+	
+
 
 @user_passes_test(user_is_active)
 @login_required

@@ -120,7 +120,7 @@ class Call(models.Model):
 		deadline = self.deadline
 		answer_created = self.answer_created
 
-		if (now > deadline) or ((answer_created is not None) and (answer_created > deadline)):
+		if ((answer_created is None) and (now > deadline)) or ((answer_created is not None) and (answer_created > deadline)):
 			return True
 		else:
 			return False

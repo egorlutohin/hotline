@@ -21,7 +21,7 @@
 <tbody>
 {% for call in calls %}
 {% url 'calls:answer_detail' call.id as call_url %}
-<tr class="{% if call.got_answer and not call.is_outdated %}success{% elif not call.got_answer and not call.is_outdated %}warning{% elif not call.got_answer and call.is_outdated %}error{% endif %}">
+<tr class="{% if call.got_answer %}success{% elif not call.got_answer and not call.is_outdated %}warning{% elif not call.got_answer and call.is_outdated %}error{% endif %}">
 	<td>{% if call.got_answer %}<i class="icon-ok"></i>{% else %}<i class="icon-remove"></i>{% endif %}</td>
 	<td><a href="{{call_url}}">{{call.id}}</a></td>
 	<td><a href="{{call_url}}">{{call.dt|date:"d.m.Y H:i"}}</td>	
