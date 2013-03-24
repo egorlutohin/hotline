@@ -7,10 +7,10 @@ admin.site.disable_action('delete_selected')
 
 
 class CitizenAdmin(admin.ModelAdmin):
-	list_display = ('number','SNP', 'birthyear', 'phone', 'address', 'add_call_link')
+	list_display = ('number','SNP', 'birthyear', 'phone', 'address', 'last_appeal', 'add_call_link')
 	list_display_links = ('SNP',)
 	search_fields = ['SNP', 'birthyear', 'phone', 'address']
-	exclude = ('last_appeal',)
+	exclude = ('last_appeal', 'first_appeal')
 
 class MOAdmin(admin.ModelAdmin):
 	list_display = ('name_short', 'name_full', 'info', 'type')

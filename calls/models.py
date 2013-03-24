@@ -12,6 +12,7 @@ class Citizen(models.Model):
 	address = models.TextField("Адрес", blank=True, null=True)
 	phone = models.CharField("Телефон(ы)", max_length=200, blank=True, null=True)
 	
+	first_appeal = models.DateTimeField("Дата первого обращения", blank=True, null=True)
 	last_appeal = models.DateTimeField("Дата последнего обращения", blank=True, null=True)
 	
 	def add_call_link(self):
@@ -27,8 +28,7 @@ class Citizen(models.Model):
 		return self.id
 	number.admin_order_field = 'id'
 	number.short_description = '#'	
-		
-		
+	
 	class Meta:
 		verbose_name = "гражданина"
 		verbose_name_plural = "граждане"
@@ -196,6 +196,12 @@ class Call(models.Model):
 		
 		if self.answer_created and not(self.call_received):
 			self.call_received = self.answer_created
+			
+		if self.citizen.first_appeal == None:
+			self.citizen.first_appeal = self.dt
+			
+		self.citizen.last_appeal = self.dt
+		self.citizen.save()
 		
 		super(Call, self).save(*args, **kwargs)
 
