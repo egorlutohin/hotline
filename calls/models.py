@@ -135,6 +135,10 @@ class Call(models.Model):
 	number.admin_order_field = 'id'
 	number.short_description = '#'	
 
+	def answer_man_admin(self):
+		return self.answer_man
+	answer_man_admin.short_description="Ответственный"
+
 	def print_operator_name(self):
 		return u"%s %s" % (self.operator.last_name, self.operator.first_name)
 

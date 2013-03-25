@@ -58,7 +58,7 @@ class CallAdmin(admin.ModelAdmin):
 		}),
 	)
 	
-	list_display = ('number', 'citizen', 'mo', 'dt', 'deadline', 'answer_man', 'print_operator_name', 
+	list_display = ('number', 'citizen', 'mo', 'dt', 'deadline', 'answer_man_admin', 'print_operator_name', 
 	                    'got_read_confirmation',  'got_answer' , 'add_or_change_answer_link')
 	list_display_links = ('citizen',)
 	raw_id_fields = ('citizen', 'mo')
