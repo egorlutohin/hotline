@@ -13,7 +13,8 @@ class CitizenAdmin(admin.ModelAdmin):
 	exclude = ('last_appeal', 'first_appeal')
 
 class MOAdmin(admin.ModelAdmin):
-	list_display = ('name_short', 'name_full', 'info', 'type')
+	list_display = ('id_admin', 'name_short', 'name_full', 'info', 'type')
+	list_display_links = ('name_short',)
 	search_fields = ('name_short', 'name_full', 'info')
 	
 from django.contrib.admin import SimpleListFilter

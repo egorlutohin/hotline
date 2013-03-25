@@ -16,7 +16,7 @@ class Citizen(models.Model):
 	last_appeal = models.DateTimeField("Дата последнего обращения", blank=True, null=True)
 	
 	def add_call_link(self):
-		return '<a href="/operator/calls/call/add/?citizen=%d">+ обращение</a>' % self.id
+		return '<a href="/operator/calls/call/add/?citizen=%d" target="call">+ обращение</a>' % self.id
 	add_call_link.short_description = "Добавить обращение"
 	add_call_link.allow_tags = True
 	
@@ -95,6 +95,11 @@ class MO(models.Model):
 	type = models.PositiveIntegerField("Тип организации", choices=TYPE.choices())
 	info = models.TextField("Дополнительная информация", help_text="Например: адрес, телефон, контактное лицо", null=True, blank=True)
 	
+	def id_admin(self):
+		return self.id
+	id_admin.admin_order_field = 'id'
+	id_admin.short_description = '#'	
+	
 	def __unicode__(self):
 		return self.name_short
 		
@@ -111,7 +116,7 @@ class Call(models.Model):
 	contents = models.TextField("Содержание сообщения")
 	answer_man = models.ForeignKey(AnswerMan, verbose_name="Ответственный за подготовку ответа")
 	
-	deadline = models.DateTimeField("Крайний срок направления ответа", blank=True)
+	deadline = models.DateTimeField("Крайний срок ответа", blank=True)
 	call_received = models.DateTimeField("Дата и время получения обращения", null=True, blank=True)
 	answer_created = models.DateTimeField("Дата и время получения ответа", null=True, blank=True)
 	
@@ -136,7 +141,7 @@ class Call(models.Model):
 	number.short_description = '#'	
 
 	def answer_man_admin(self):
-		return self.answer_man
+		return self.answer_man.user.last_name
 	answer_man_admin.short_description="Ответственный"
 
 	def print_operator_name(self):
@@ -149,10 +154,10 @@ class Call(models.Model):
 		try:
 			self.answer
 			#изменить ответ
-			return '<a href="/operator/answers/answer/%d/">изменить</a>' % self.id
+			return '<a href="/operator/answers/answer/%d/" target="answer">изменить</a>' % self.id
 		except:
 			# добавить ответ
-			return '<a href="/operator/answers/answer/add/?call=%d">добавить</a>' % self.id
+			return '<a href="/operator/answers/answer/add/?call=%d" target="answer">добавить</a>' % self.id
 	add_or_change_answer_link.short_description = "Ответ"
 	add_or_change_answer_link.allow_tags = True
 
