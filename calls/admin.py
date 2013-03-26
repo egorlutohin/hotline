@@ -14,7 +14,7 @@ class CitizenAdmin(admin.ModelAdmin):
 
 class MOAdmin(admin.ModelAdmin):
 	list_display = ('id_admin', 'name_short', 'name_full', 'info', 'type')
-	list_display_links = ('name_short',)
+	list_display_links = ('name_short', 'name_full')
 	search_fields = ('name_short', 'name_full', 'info')
 	
 from django.contrib.admin import SimpleListFilter

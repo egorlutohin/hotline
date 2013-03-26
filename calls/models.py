@@ -106,6 +106,7 @@ class MO(models.Model):
 	class Meta:
 		verbose_name = "медицинскую организацию"
 		verbose_name_plural = "Медицинские организации"
+		ordering = ['id',]
 		
 class Call(models.Model):
 	"Обращение по телефону"
