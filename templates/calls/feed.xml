@@ -14,9 +14,10 @@
 				<div><strong>Адрес:</strong> {{call.citizen.address}}</div>
 				<div><strong>Телефон:</strong> {{call.citizen.phone}}</div>
 				<div>{{call.contents|linebreaks}}</div>
-				<img src="{{url}}/feed/confirm/{{call.id}}/{{call.secret}}.png?d={% now "Y-m-d-H-i-s" %} alt="" style="visibility: hidden; width: 1px; height: 1px;" />
 				<br /><br />
-				<a href="{{url}}{% url "calls:answer_detail" call.id %}" target="answer">Написать ответ</a>
+				<a href="{{url}}{% url "calls:answer_detail" call.id %}" target="answer" style="float: left; text-align: center;">
+					<img src="{{url}}/feed/confirm/{{call.id}}/{{call.secret}}.png" alt="" style="border: none; width: 116px; height: 34px;" />
+				</a>
 			]]>
 			</description>
 			<guid>MH-NSO:HOTLINE:CALL:{{call.id}}</guid>
