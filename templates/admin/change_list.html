@@ -39,7 +39,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <!--&rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ app_label|capfirst|escape }}</a>-->
-<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+<a href="{% url 'admin:index' %}" accesskey="-">{% trans 'Home' %}</a>
 &rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
 </div>
 {% endblock %}
@@ -54,7 +54,7 @@
         <ul class="object-tools">
           {% block object-tools-items %}
             <li>
-              <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink" accesskey="l">
+              <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink" accesskey="=">
                 {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
               </a>
             </li>

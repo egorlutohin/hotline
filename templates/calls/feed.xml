@@ -16,7 +16,7 @@
 				<div>{{call.contents|linebreaks}}</div>
 				<br /><br />
 				<a href="{{url}}{% url "calls:answer_detail" call.id %}" target="answer" style="float: left; text-align: center;">
-					<img src="{{url}}/feed/confirm/{{call.id}}/{{call.secret}}.png" alt="" style="border: none; width: 116px; height: 34px;" />
+					<img src="{{url}}/feed/confirm/{{call.id}}/{{call.secret}}.png" alt="" style="border: none; width: 161px; height: 34px;" />
 				</a>
 			]]>
 			</description>
