@@ -54,12 +54,12 @@ class CallAdmin(admin.ModelAdmin):
 			'fields': ('dt', 'citizen', 'mo', 'contents', 'answer_man',)
 		}),
 		('Контрольные даты', {
-			'classes': ('collapse',),		
+			# 'classes': ('collapse',),		
 			'fields':  ('deadline', 'call_received',),
 		}),
 	)
 	
-	list_display = ('number', 'citizen', 'mo', 'dt', 'deadline', 'answer_man_admin', 'print_operator_name', 
+	list_display = ('number', 'citizen', 'mo_admin', 'dt', 'deadline', 'answer_man_admin', 'print_operator_name', 
 	                    'got_read_confirmation',  'got_answer' , 'add_or_change_answer_link')
 	list_display_links = ('citizen',)
 	raw_id_fields = ('citizen', 'mo')

@@ -10,7 +10,11 @@
 			<title>{{call}} от {{call.citizen}}</title>
 			<link>{{url}}{% url "calls:answer_detail" call.id %}</link>
 			<description><![CDATA[
+				<div><strong>Номер обращения:</strong> {{call.id}}</div>
+				<div><strong>Оператор:</strong> {{call.operator.last_name}} {{call.operator.first_name}}</div>
 				<div><strong>Крайний срок направления ответа:</strong> {{call.deadline}}</div>
+				<div><strong>Медицинская организация:</strong> {{call.mo}}</div>
+				<div><strong>Гражданин:</strong> {{call.citizen}}</div>
 				<div><strong>Адрес:</strong> {{call.citizen.address}}</div>
 				<div><strong>Телефон:</strong> {{call.citizen.phone}}</div>
 				<div>{{call.contents|linebreaks}}</div>

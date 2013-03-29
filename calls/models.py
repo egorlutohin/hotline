@@ -7,19 +7,18 @@ import workcalendar
 ### Question ###
 
 class Citizen(models.Model):
-	SNP = models.CharField("ФИО",max_length=200)
+	SNP = models.CharField("ФИО",max_length=200, help_text="ФИО полностью, например: Иванов Иван Иванович")
 	birthyear = models.PositiveIntegerField("Год рождения")
 	address = models.TextField("Адрес", blank=True, null=True)
-	phone = models.CharField("Телефон(ы)", max_length=200, blank=True, null=True)
-	
+	phone = models.CharField("Телефон(ы)", max_length=200, help_text="например: (383-40) 21-071, 351-22-65, 8-913-746-53-94" ,blank=True, null=True)
+
 	first_appeal = models.DateTimeField("Дата первого обращения", blank=True, null=True)
 	last_appeal = models.DateTimeField("Дата последнего обращения", blank=True, null=True)
-	
+
 	def add_call_link(self):
-		return '<a class="addlink" href="/operator/calls/call/add/?citizen=%d" target="call">Обращение</a>' % self.id
+		return '<a class="addlink" href="/operator/calls/call/add/?citizen=%d">Обращение</a>' % self.id
 	add_call_link.short_description = "Добавить обращение"
 	add_call_link.allow_tags = True
-	
 	
 	def __unicode__(self):
 		return u"%s, %d г.р." % (self.SNP, self.birthyear)
@@ -57,7 +56,6 @@ class AnswerMan(models.Model):
 		return u"%s %s" % (self.user.last_name, self.user.first_name)
 	print_answerman_name.admin_order_field = 'id'
 	print_answerman_name.short_description = 'Имя оператора'	
-	
 	
 	def __unicode__(self):
 		return u"%s / %s" % (self.department.name, self.user.last_name,)
@@ -117,7 +115,7 @@ class Call(models.Model):
 	contents = models.TextField("Содержание сообщения")
 	answer_man = models.ForeignKey(AnswerMan, verbose_name="Ответственный за подготовку ответа")
 	
-	deadline = models.DateTimeField("Крайний срок ответа", blank=True)
+	deadline = models.DateTimeField("Крайний срок ответа")
 	call_received = models.DateTimeField("Дата и время получения обращения", null=True, blank=True)
 	answer_created = models.DateTimeField("Дата и время получения ответа", null=True, blank=True)
 	
@@ -137,13 +135,21 @@ class Call(models.Model):
 	def number(self):
 		"Номер обращения"
 		return self.id
-		
 	number.admin_order_field = 'id'
 	number.short_description = '#'	
 
+	def mo_admin(self):
+		return self.mo
+	mo_admin.admin_order_field = 'mo'
+	mo_admin.short_description = 'Медицинская организация'
+
 	def answer_man_admin(self):
-		return self.answer_man.user.last_name
+		title = "%s %s, %s" % (self.answer_man.user.last_name, self.answer_man.user.first_name, self.answer_man.comment, )
+		full_name = self.answer_man.user.last_name
+		return '<span title="%s">%s</span>' % (title, full_name)
 	answer_man_admin.short_description="Ответственный"
+	answer_man_admin.allow_tags = True
+	
 
 	def print_operator_name(self):
 		return u"%s %s" % (self.operator.last_name, self.operator.first_name)
@@ -155,10 +161,10 @@ class Call(models.Model):
 		try:
 			self.answer
 			#изменить ответ
-			return '<a class="changelink" href="/operator/answers/answer/%d/" target="answer">Изменить</a>' % self.id
+			return '<a class="changelink" href="/operator/answers/answer/%d/">Изменить</a>' % self.id
 		except:
 			# добавить ответ
-			return '<a class="addlink" href="/operator/answers/answer/add/?call=%d" target="answer">Добавить</a>' % self.id
+			return '<a class="addlink" href="/operator/answers/answer/add/?call=%d">Добавить</a>' % self.id
 	add_or_change_answer_link.short_description = "Ответ"
 	add_or_change_answer_link.allow_tags = True
 
