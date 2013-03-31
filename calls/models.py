@@ -115,7 +115,7 @@ class Call(models.Model):
 	contents = models.TextField("Содержание сообщения")
 	answer_man = models.ForeignKey(AnswerMan, verbose_name="Ответственный за подготовку ответа")
 	
-	deadline = models.DateTimeField("Крайний срок ответа")
+	deadline = models.DateTimeField("Крайний срок ответа", blank=True)
 	call_received = models.DateTimeField("Дата и время получения обращения", null=True, blank=True)
 	answer_created = models.DateTimeField("Дата и время получения ответа", null=True, blank=True)
 	
@@ -202,11 +202,7 @@ class Call(models.Model):
 	
 	def save(self, *args, **kwargs):
 		if self.deadline == None:
-			if workcalendar.is_workday(self.dt):
-				d = workcalendar.next_workday(self.dt)
-			else:
-				d = workcalendar.next_workday(workcalendar.next_workday(self.dt))
-				
+			d = workcalendar.next_workday_inclusive(self.dt, offset = 2) # 2 рабочих дня включая день получения обращения
 			deadline = timezone.datetime(year = d.year, month = d.month, day = d.day, hour = 23, minute = 59, second = 59)
 			self.deadline = deadline
 		

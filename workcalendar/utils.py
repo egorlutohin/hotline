@@ -1,4 +1,4 @@
-from models import ExceptionalDays
+﻿from models import ExceptionalDays
 from datetime import datetime, date, timedelta
 
 def _clean_dt(dt):
@@ -9,30 +9,28 @@ def _clean_dt(dt):
 	
 	return d
 
-def is_workday(dt):
-	d = _clean_dt(dt)	
-
-	try:
-		day = ExceptionalDays.objects.get(pk=d)
-	except ExceptionalDays.DoesNotExist:
-		day = None
+def next_workday_inclusive(dt, offset):
+	"Вернет следующий рабочий день через `offset` рабочих дней от переданной даты, включая переданную"
 	
-	if day:
-		return day.is_workday()
-	else:
-		if d.weekday() in (5,6):
-			return False
-		else:
-			return True
-
-def next_workday(dt):
 	d = _clean_dt(dt)
-	one_day = timedelta(days=1)
+
+	if offset < 2:
+		return d
+
+	oneday = timedelta(days=1)
+
+	#~ excdays = ExceptionalDays.objects.filter(pk_gte=d) # праздничные дни
+	# TODO: переписать функцию с учетом праздничных дней
 	
-	while True:
-		next_day = d + one_day
-		if is_workday(next_day):
-			break
-	
-	return next_day
-	
+	for i in xrange(0, offset - 1):
+		wd = d.weekday()
+		if  wd == 4: # пятница
+			d = d + oneday + oneday + oneday # добавить 2 выходных и один рабочий
+		elif  wd == 5: # суббота
+			d = d + oneday + oneday + oneday # добавить 1 выходной и один рабочий
+		elif wd == 6: # воскресенье
+			d = d + oneday + oneday # добавить 2 рабочих
+		else: # понедельник, вторинк, среда, четверг
+			d = d + oneday # добавить 1 рабочий
+		
+	return d

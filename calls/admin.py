@@ -54,7 +54,7 @@ class CallAdmin(admin.ModelAdmin):
 			'fields': ('dt', 'citizen', 'mo', 'contents', 'answer_man',)
 		}),
 		('Контрольные даты', {
-			# 'classes': ('collapse',),		
+			'classes': ('collapse',),		
 			'fields':  ('deadline', 'call_received',),
 		}),
 	)
