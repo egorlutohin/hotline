@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils import timezone
 import workcalendar
 
-admin.site.disable_action('delete_selected')
+#admin.site.disable_action('delete_selected')
 
 
 class CitizenAdmin(admin.ModelAdmin):
