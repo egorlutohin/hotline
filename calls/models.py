@@ -153,9 +153,13 @@ class Call(models.Model):
 
 	def print_operator_name(self):
 		return u"%s %s" % (self.operator.last_name, self.operator.first_name)
-
 	print_operator_name.admin_order_field = 'op'
 	print_operator_name.short_description = 'Оператор'	
+	
+	def citizen_admin(self):
+		return self.citizen
+	citizen_admin.admin_order_field = 'citizen'
+	citizen_admin.short_description = "Гражданин"
 	
 	def add_or_change_answer_link(self):
 		try:
