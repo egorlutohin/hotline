@@ -1,0 +1,58 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}" accesskey="-">{% trans 'Home' %}</a>
+&rsaquo; Анализ обращений по учреждениям здравоохранения
+</div>
+{% endblock %}
+
+
+{% block content %}
+<style type="text/css">
+//~ * .vertical {
+//~ -moz-transform: rotate(-90deg);
+//~ -webkit-transform: rotate(-90deg);
+//~ -o-transform: rotate(-90deg);
+//~ writing-mode: tb-rl;
+//~ }
+
+.reporttable td {
+	border: 1px solid #000;
+}
+</style>
+
+<h1>Стандартный отчет</h1>
+<form>
+<table>
+{{pf}}
+<tr>
+<td></td>
+<td><button type="submit">Получить</button></td>
+</tr>
+</table>
+</form>
+
+<table class="reporttable">
+<tr>
+<td>&nbsp;</td>
+{% for i in profile.items %}
+<td class="vertical">{{i.1}}</td>
+{% endfor %}
+</tr>
+
+{% for tl in table %}
+<tr>
+  {% for i in tl %}
+    <td>{{i}}</td>
+  {% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}

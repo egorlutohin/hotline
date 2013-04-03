@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'calls',
     'answers',
     'workcalendar',
+    'reports',
 )
 
 # A sample logging configuration. The only tangible logging

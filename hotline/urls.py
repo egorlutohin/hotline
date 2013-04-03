@@ -11,6 +11,8 @@ urlpatterns = patterns('',
     #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^%s$' % settings.LOGIN_URL[1:], 'django.contrib.auth.views.login', name='login'),
     url(r'^%s$' % settings.LOGOUT_URL[1:], 'django.contrib.auth.views.logout', {'template_name': 'registration/logout.html'}, name='logout',),
+    url(r'^operator/reports/', include('reports.urls', namespace='reports')),    
     url(r'^operator/', include(admin.site.urls)),
     url(r'', include('calls.urls', namespace='calls')),
+    
 )

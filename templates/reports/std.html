@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}" accesskey="-">{% trans 'Home' %}</a>
+&rsaquo; Стандартный отчет
+</div>
+{% endblock %}
+
+
+{% block content %}
+<h1>Стандартный отчет</h1>
+
+{% endblock %}
