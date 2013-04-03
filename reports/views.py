@@ -49,11 +49,13 @@ def analysis(request):
 	result = cursor.fetchall()
 	
 	mo_dict = {}
-	for l in cursor.execute("select id, name_short from calls_mo order by id"):
+	cursor.execute("select id, name_short from calls_mo order by id")
+	for l in cursor.fetchall():
 		mo_dict[l[0]] = l[1]
 		
 	profile_dict = {}
-	for l in cursor.execute("select id, name, code from answers_callprofile order by code"):
+	cursor.execute("select id, name, code from answers_callprofile order by code")
+	for l in cursor.fetchall():
 		profile_dict[l[0]] = "%s - %s" % (l[2], l[1])
 
 	td = {} # table dictionary
@@ -66,7 +68,7 @@ def analysis(request):
 	for i in td:
 		l = []
 		rt.append(l)
-		l.append(mo_dict[i])
+		l.append(mo_dict.get(i))
 		for j in profile_dict:
 			l.append(td[i].get(j, ""))
 			
