@@ -222,7 +222,7 @@ def ajax_mo(request):
 		if request.POST['mo_id']:
 			mo_id = int(request.POST['mo_id'])
 		else:
-			mo_id = None
+			return JsonResponse({'success': False, 'message': "Медицинская организация не выбрана"})
 	except:
 		raise Http404(1) # TODO: raise more informative message...
 	

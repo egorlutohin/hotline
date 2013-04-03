@@ -63,7 +63,7 @@ $.ajaxSetup({
 				$('#__mo').text($('#id_mo :selected').text())
 				$('#changeMOModal').modal('hide')
 			} else {
-				//TODO: print error!!!
+				alert(data.message);
 			}
 		},
 		complete: function(){
@@ -99,6 +99,19 @@ $.ajaxSetup({
 	})
  }
  
+ function validate_form(btn) {
+ 
+	if(!$('#id_mo').val()) {
+		alert('Выберите медицинскую организацию!');
+		return false;
+	}
+ 
+	return true;
+ }
+ 
+ 
+ 
+ 
 </script>
 
 <style type="text/css">
@@ -121,7 +134,7 @@ $.ajaxSetup({
  <tr><th>Гражданин</th><td>{{call.citizen}}</td></tr>
  <tr><th>Адрес</th><td>{{call.citizen.address|linebreaksbr}}</td></tr>
  <tr><th>Контактный телефон</th><td>{{call.citizen.phone}}</td></tr>
- <tr><th>Медицинская организация <button class="btn btn-mini btn-link" title="Изменить мед. организацию" role="button" data-toggle="modal" data-target="#changeMOModal"><i class="icon-pencil"></i></button></th><td id="__mo">{{call.mo}}</td></tr>
+ <tr><th>Медицинская организация <button class="btn btn-mini btn-link" title="Изменить мед. организацию" role="button" data-toggle="modal" data-target="#changeMOModal"><i class="icon-pencil"></i></button></th><td id="__mo">{% if call.mo %}{{call.mo}}{% else %}<span class="text-error">Медицинская организация не указана оператором. Выберите, пожалуйста, медицинскую организацию.</span>{% endif %}</td></tr>
  <tr><th>Текст <button class="btn btn-mini btn-link" title="Изменить текст обращения" role="button" data-toggle="modal" data-target="#changeContentsModal"><i class="icon-pencil" ></i></button></th><td id="__contents" style="white-space: pre-wrap;">{{call.contents}}</td></tr>
 </table>
 
@@ -152,7 +165,7 @@ $.ajaxSetup({
    <p class="text-error">{{reason_form.text.errors|join:' '}}</p>
    {% endif %}
    <div class="form-actions">
-	<button type="submit" class="btn btn-primary pull-right">Сохранить</button>
+	<button type="submit" class="btn btn-primary pull-right" onclick="return validate_form(this)">Сохранить</button>
    </div>
   
  </form>
