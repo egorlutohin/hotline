@@ -70,6 +70,12 @@ class Answer(models.Model):
 		else:
 			return name
 	action_short_name.short_description = "Меры"
+	
+	def mo_admin(self):
+		return self.call.mo
+	mo_admin.short_description = "Мед. орг."
+	mo_admin.admin_order_field = 'call__mo'
+	
 
 
 	

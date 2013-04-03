@@ -2,7 +2,7 @@ from django.contrib import admin
 from models import CallProfile, Action, Answer, CallProfileGroup
 
 class AnswerAdmin(admin.ModelAdmin):
-	list_display = ('call_id', 'dt', 'call_contents', 'contents', 'profile', 'action_short_name', 'validity')
+	list_display = ('call_id', 'dt', 'mo_admin', 'call_contents', 'contents', 'profile', 'action_short_name', 'validity')
 	list_display_links = ('call_id', 'dt',)
 	
 	raw_id_fields = ('call', )
