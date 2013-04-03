@@ -28,34 +28,36 @@ def std(request):
 def analysis(request):
 	"Анализ"
 	
+	default_tz = timezone.get_default_timezone()
+	
 	period_form = PeriodForm(request.GET)
 	
 	if period_form.is_valid():
-		sd = period_form.cleaned_data['start_date']
-		ed = period_form.cleaned_data['end_date']
+		_ = period_form.cleaned_data['start_date']
+		sd = datetime(_.year, _.month, _.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		_ = period_form.cleaned_data['end_date']
+		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 	else:
 		now = date.today()
-		sd = date(now.year, now.month, 1)
-		ed = date(now.year, now.month + 1, 1) - timedelta(days=1)
-		period_form = PeriodForm({'start_date': sd.strftime("%d.%m.%Y"), 'end_date': ed.strftime("%d.%m.%Y")})
+		sd = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
+		period_form = PeriodForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
 	
 	from django.db import connection, transaction
 	cursor = connection.cursor()
 	
 	query = "select mo_id, profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id where t1.dt >= %s and t1.dt <= %s group by mo_id, profile_id order by mo_id, profile_id"
 	
-	cursor.execute(query, [sd.strftime("%Y-%m-%d"), ed.strftime("%Y-%m-%d")])
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
 	
 	result = cursor.fetchall()
 	
 	mo_dict = {}
-	cursor.execute("select id, name_short from calls_mo order by id")
-	for l in cursor.fetchall():
+	for l in cursor.execute("select id, name_short from calls_mo order by id"):
 		mo_dict[l[0]] = l[1]
 		
 	profile_dict = {}
-	cursor.execute("select id, name, code from answers_callprofile order by code")
-	for l in cursor.fetchall():
+	for l in cursor.execute("select id, name, code from answers_callprofile order by code"):
 		profile_dict[l[0]] = "%s - %s" % (l[2], l[1])
 
 	td = {} # table dictionary
@@ -68,7 +70,7 @@ def analysis(request):
 	for i in td:
 		l = []
 		rt.append(l)
-		l.append(mo_dict.get(i))
+		l.append(mo_dict[i])
 		for j in profile_dict:
 			l.append(td[i].get(j, ""))
 			
