@@ -75,6 +75,11 @@ class Answer(models.Model):
 		return self.call.mo
 	mo_admin.short_description = "Мед. орг."
 	mo_admin.admin_order_field = 'call__mo'
+
+	def profile_admin(self):
+		return self.profile
+	profile_admin.short_description = "Профиль обращения"
+	profile_admin.admin_order_field = 'profile'
 	
 
 
