@@ -157,9 +157,22 @@ def answer_index(request):
 	except AnswerMan.DoesNotExist:
 		return HttpResponseRedirect(settings.LOGIN_URL)
 	
-	calls = Call.objects.select_related('citizen', 'mo').filter(answer_man = answerman)
+	show_mode = request.GET.get('show')
+	calls_all = Call.objects.select_related('citizen', 'mo').filter(answer_man = answerman)
+	calls_wo_answer = calls_all.filter(answer_created__isnull=True)
 	
-	return render(request, 'calls/answer_index.html', {'calls': calls})
+	counters = {}
+	counters['all'] = calls_all.count()
+	counters['wo_answer'] = calls_wo_answer.count()
+	
+	if show_mode =='wo_answer':
+		calls = calls_wo_answer
+	else:
+		show_mode = 'all'
+		calls = calls_all
+		
+	
+	return render(request, 'calls/answer_index.html', {'calls': calls, 'counters': counters, 'show_mode': show_mode})
 
 
 @login_required
