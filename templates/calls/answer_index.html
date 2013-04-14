@@ -2,6 +2,8 @@
 {% block content %}
 <style type="text/css">
   thead tr.info th {vertical-align: top;}
+  span.disabled {color: #999999}
+  span.current {font-weight: bold;}
 </style>
 
 <p>&nbsp;</p>
@@ -43,4 +45,26 @@
 {% endfor %}
 </tbody>
 </table>
+
+{% if calls.paginator.num_pages > 1 %}
+<div class="pagination text-right" style="">
+    <span class="step-links">
+        {% if calls.has_previous %}
+            <a href="?show={{show_mode}}&page={{ calls.previous_page_number }}">&larr; предыдущая</a>
+	{% else %}
+	    <span class="disabled">&larr; предыдущая</span>
+        {% endif %}
+	&nbsp;
+        <span class="current">
+            стр. {{ calls.number }} из {{ calls.paginator.num_pages }}
+        </span>
+	&nbsp;
+        {% if calls.has_next %}
+            <a href="?show={{show_mode}}&page={{ calls.next_page_number }}">следующая &rarr;</a>
+	{% else %}
+	    <span class="disabled">следующая &rarr;</span>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
 {% endblock %}

@@ -1,17 +1,19 @@
 ﻿# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.contrib.syndication.views import Feed
+
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from hotline.basic_auth import basic_http_auth, _auth_required_response
 from calls.models import Call, AnswerMan, MO
 from calls.forms import CallModelForm, AnswerModelForm, ReasonModelForm
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.exceptions import PermissionDenied # HTTP 403 Exception
 
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from django.core.exceptions import PermissionDenied # HTTP 403 Exception
+
 from django.conf import settings
 from django.utils import timezone
 
@@ -175,8 +177,20 @@ def answer_index(request):
 		show_mode = 'all'
 		calls = calls_all
 		
+	paginator = Paginator(calls, 20) # show 20 calls per page
 	
-	return render(request, 'calls/answer_index.html', {'calls': calls, 'counters': counters, 'show_mode': show_mode})
+	page = request.GET.get('page')
+	try:
+		calls_page = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		calls_page = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range (e.g. 9999), deliver last page of results.
+		calls_page = paginator.page(paginator.num_pages)	
+		
+	
+	return render(request, 'calls/answer_index.html', {'calls': calls_page, 'counters': counters, 'show_mode': show_mode})
 
 
 @login_required
@@ -188,7 +202,7 @@ def answer_detail(request, call_id):
 		answerman = AnswerMan.objects.get(user=request.user)
 		call = Call.objects.select_related('citizen', 'mo').get(answer_man=answerman, pk=call_id)
 	except (Call.DoesNotExist, AnswerMan.DoesNotExist):
-		raise PermissionDenied('Вам не положено видеть эту страницу!')
+		raise PermissionDenied('Вам не положено видеть эту страницу!') # http 403
 		
 	reason_form = None
 	answer_form = None
