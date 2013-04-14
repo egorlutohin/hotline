@@ -160,13 +160,17 @@ def answer_index(request):
 	show_mode = request.GET.get('show')
 	calls_all = Call.objects.select_related('citizen', 'mo').filter(answer_man = answerman)
 	calls_wo_answer = calls_all.filter(answer_created__isnull=True)
+	calls_wo_answer_outdated = calls_all.filter(answer_created__isnull=True).filter(deadline__lte=timezone.now())
 	
 	counters = {}
 	counters['all'] = calls_all.count()
 	counters['wo_answer'] = calls_wo_answer.count()
+	counters['wo_answer_outdated'] = calls_wo_answer_outdated.count()
 	
 	if show_mode =='wo_answer':
 		calls = calls_wo_answer
+	elif show_mode == 'wo_answer_outdated':
+		calls = calls_wo_answer_outdated
 	else:
 		show_mode = 'all'
 		calls = calls_all
