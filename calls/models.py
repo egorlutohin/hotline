@@ -162,11 +162,10 @@ class Call(models.Model):
 	citizen_admin.short_description = "Гражданин"
 	
 	def add_or_change_answer_link(self):
-		try:
-			self.answer
+		if self.answer_created:
 			#изменить ответ
 			return '<a class="changelink" href="/operator/answers/answer/%d/">Изменить</a>' % self.id
-		except:
+		else:
 			# добавить ответ
 			return '<a class="addlink" href="/operator/answers/answer/add/?call=%d">Добавить</a>' % self.id
 	add_or_change_answer_link.short_description = "Ответ"

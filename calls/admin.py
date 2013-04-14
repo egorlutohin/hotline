@@ -60,7 +60,7 @@ class CallAdmin(admin.ModelAdmin):
 	)
 	
 	list_display = ('number', 'citizen_admin', 'mo_admin', 'dt', 'deadline', 'answer_man_admin', 'print_operator_name', 
-	                    'got_read_confirmation',  'got_answer' , 'add_or_change_answer_link')
+	                     'got_read_confirmation', 'got_answer' , 'add_or_change_answer_link')
 	list_display_links = ('citizen_admin',)
 	raw_id_fields = ('citizen', 'mo')
 	
@@ -71,6 +71,10 @@ class CallAdmin(admin.ModelAdmin):
 		if not change:
 			obj.operator = request.user
 		obj.save()
+		
+	def queryset(self, request):
+		return super(CallAdmin, self).queryset(request).select_related(
+				'operator', 'citizen', 'mo', 'answer_man', 'answer_man__user',)
 
 class AnswerManAdmin(admin.ModelAdmin):
 	list_display = ('print_answerman_name', 'department')
