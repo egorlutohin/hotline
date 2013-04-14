@@ -6,6 +6,11 @@ class AnswerAdmin(admin.ModelAdmin):
 	list_display_links = ('call_id', 'dt',)
 	
 	raw_id_fields = ('call', )
+	
+	def queryset(self, request):
+		return super(AnswerAdmin, self).queryset(request).select_related(
+				'call', 'call__mo', 'profile', 'action')
+
 
 class CallProfileGroupAdmin(admin.ModelAdmin):
 	list_display = ('code', 'name')
