@@ -49,7 +49,7 @@
      <td>{{answer.call_id}}</td>
      <td>{{answer.call.citizen}}</td>
      <td>{{answer.call.citizen.address}}<br />тел. {{answer.call.citizen.phone}}</td>
-     <td>{{answer.call.mo}}</td>
+     <td>{{answer.call.mo|default_if_none:""}}</td>
      <td>{{answer.call.contents|linebreaksbr}}</td>
      <td>{{answer.call.answer_man.department}}, {{answer.call.answer_man.user.last_name}} {{answer.call.answer_man.user.first_name}}</td>
      <td>{{answer.call.dt|date:"d.m.Y H:i"}}</td>
