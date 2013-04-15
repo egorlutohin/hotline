@@ -1,0 +1,62 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}" accesskey="-">{% trans 'Home' %}</a>
+&rsaquo; Отчет №3
+</div>
+{% endblock %}
+
+
+{% block content %}
+
+<style type="text/css">
+.reporttable td, .reporttable th {
+	border: 1px solid #000;
+}
+</style>
+
+
+<h1>Отчет №3</h1>
+
+
+{% for answer in answers %}
+ {% ifchanged answer.profile.code %}
+ {% if not forloop.first %}
+ </table>
+ {% endif %}
+ <h3>{{answer.profile}}</h3>
+   <table class="reporttable">
+    <tr>
+    <th>#</th>
+    <th>ФИО автора, год рождения</th>
+    <th>Контактный адрес, район, контактный телефон</th>
+    <th>Медицинская организация в обращении</th>
+    <th>Содержание обращения</th>
+    <th>Кому направлено на рассмотрение</th>
+    <th>Дата и время направления ответственному за подготовку ответа</th>
+    <th>Дата и время направления ответа автору</th>
+    <th>Меры принятые по результатам рассмотрения</th>
+    <th>Обоснованность претензии</th>
+   </tr>
+ {% endifchanged %}
+
+   <tr>
+     <td>{{answer.call_id}}</td>
+     <td>{{answer.call.citizen}}</td>
+     <td>{{answer.call.citizen.address}}<br />тел. {{answer.call.citizen.phone}}</td>
+     <td>{{answer.call.mo}}</td>
+     <td>{{answer.call.contents|linebreaksbr}}</td>
+     <td>{{answer.call.answer_man.department}}, {{answer.call.answer_man.user.last_name}} {{answer.call.answer_man.user.first_name}}</td>
+     <td>{{answer.call.dt|date:"d.m.Y H:i"}}</td>
+     <td>{{answer.dt|date:"d.m.Y H:i"}}</td>
+     <td>{{answer.contents|linebreaksbr}}<br />Код {{answer.action.code}}.</td>
+     <td>{{answer.validity|yesno:"Да,Нет"}}</td>
+   </tr>
+{% endfor %}
+</table>
+{% endblock %}

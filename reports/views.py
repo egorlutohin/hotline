@@ -77,11 +77,17 @@ def analysis(request):
 			l.append(td[i].get(j, ""))
 			
 	# TODO: maybe using regroup tag in template
-	
-	
-	
-	
 	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': period_form})
+
+from answers.models import Answer
+def reportthree(request):
+	
+	answers = Answer.objects.select_related('call', 'call__citizen', 'call__mo', 'call__answer_man', 'call__answer_man__department', 'call__answer_man__user', 'profile', 'action').all().order_by('profile__code')
+	
+	return render(request, 'reports/reportthree.html', {'answers': answers})
+	
+	
+	
 
 	
 
