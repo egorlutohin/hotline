@@ -204,6 +204,10 @@ def answer_detail(request, call_id):
 	except (Call.DoesNotExist, AnswerMan.DoesNotExist):
 		raise PermissionDenied('Вам не положено видеть эту страницу!') # http 403
 		
+	if not call.call_received:
+		call.call_received = timezone.now()
+		call.save()
+		
 	reason_form = None
 	answer_form = None
 		
