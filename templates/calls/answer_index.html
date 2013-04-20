@@ -9,7 +9,7 @@
 <p>&nbsp;</p>
 <h3 style="float: left; margin: 0; padding: 0;">Список обращений &nbsp;&nbsp;</h3>
 <ul class="nav nav-pills" style="padding-top: 4px;">
-  <li{% if show_mode == 'all'%} class="active"{% endif %}><a href=".">все ({{counters.all}})</a></li>
+  <li{% if show_mode == 'all'%} class="active"{% endif %}><a href=".?show=all">все ({{counters.all}})</a></li>
   <li{% if show_mode == 'wo_answer'%} class="active"{% endif %}><a href="?show=wo_answer">без ответа ({{counters.wo_answer}})</a></li>
   <li{% if show_mode == 'wo_answer_outdated'%} class="active"{% endif %}><a href="?show=wo_answer_outdated">крайний срок прошёл ({{counters.wo_answer_outdated}})</a></li>
 </ul>

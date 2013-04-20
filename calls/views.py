@@ -159,7 +159,6 @@ def answer_index(request):
 	except AnswerMan.DoesNotExist:
 		return HttpResponseRedirect(settings.LOGIN_URL)
 	
-	show_mode = request.GET.get('show')
 	calls_all = Call.objects.select_related('citizen', 'mo').filter(answer_man = answerman)
 	calls_wo_answer = calls_all.filter(answer_created__isnull=True)
 	calls_wo_answer_outdated = calls_all.filter(answer_created__isnull=True).filter(deadline__lte=timezone.now())
@@ -168,6 +167,13 @@ def answer_index(request):
 	counters['all'] = calls_all.count()
 	counters['wo_answer'] = calls_wo_answer.count()
 	counters['wo_answer_outdated'] = calls_wo_answer_outdated.count()
+	
+	show_mode = request.GET.get('show') 
+	# если нет в get-запросе, то тогда попробовать достать из сессии
+	if not show_mode: 
+		show_mode = request.session.get('show')
+	else:
+		request.session['show'] = show_mode
 	
 	if show_mode =='wo_answer':
 		calls = calls_wo_answer
