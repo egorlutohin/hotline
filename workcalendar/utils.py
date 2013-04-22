@@ -18,19 +18,23 @@ def next_workday_inclusive(dt, offset):
 		return d
 
 	oneday = timedelta(days=1)
-
-	#~ excdays = ExceptionalDays.objects.filter(pk_gte=d) # праздничные дни
-	# TODO: переписать функцию с учетом праздничных дней
 	
-	for i in xrange(0, offset - 1):
+	excdays = [e.date for e in ExceptionalDays.objects.filter(pk__gte=d)] # исключения: праздничные дни, рабочие выходные
+
+	o = offset
+	while True:
 		wd = d.weekday()
-		if  wd == 4: # пятница
-			d = d + oneday + oneday + oneday # добавить 2 выходных и один рабочий
-		elif  wd == 5: # суббота
-			d = d + oneday + oneday + oneday # добавить 1 выходной и один рабочий
-		elif wd == 6: # воскресенье
-			d = d + oneday + oneday # добавить 2 рабочих
-		else: # понедельник, вторинк, среда, четверг
-			d = d + oneday # добавить 1 рабочий
+		
+		if wd in (5, 6): # суббота, воскресенье
+			if d in excdays:
+				o-=1
+		else: #будни
+			if d not in excdays:
+				o-=1
+		
+		if o == 0:
+			break
+		
+		d+= oneday
 		
 	return d
