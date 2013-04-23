@@ -318,6 +318,28 @@ addEvent(window, 'load', DateTimeShortcuts.init);
 .reporttable td {
 	border: 1px solid #CCC;
 }
+
+thead {
+
+    //~ -moz-transform: rotate(270deg);  /* FF3.5+ */        
+    //~ -o-transform: rotate(270deg);  /* Opera 10.5 */   
+    //~ -webkit-transform: rotate(270deg);  /* Saf3.1+, Chrome */              
+    //~ filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=3);  /* IE6,IE7 */          
+    //~ -ms-filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); /* IE8 */
+font-weight: bold;
+text-align: center;
+}
+
+thead tr .small {
+	font-size: 7px;
+	line-height: 1.2;
+	padding: 1px;
+}
+
+@media print {
+#header, .breadcrumbs, #footer, #content form {display: none;}
+}
+
 </style>
 
 <!-- / extra head for admindatetime -->
@@ -337,7 +359,7 @@ addEvent(window, 'load', DateTimeShortcuts.init);
 <fieldset class="module aligned" style="float: left;">
     <h2>Параметры отчета</h2>
     <div class="form-row">
-          {{pf.start_date.label}}: {{pf.start_date}} &nbsp;&nbsp;&nbsp; {{pf.end_date.label}}: {{pf.end_date}} &nbsp;&nbsp;&nbsp; <button type="submit">Сформировать</button>
+          {{pf.start_date.label}}: {{pf.start_date}} &nbsp;&nbsp;&nbsp; {{pf.end_date.label}}: {{pf.end_date}} &nbsp;&nbsp;&nbsp; <input type="submit" value="Cформировать" />
     </div>
 </fieldset>
 </form>
@@ -345,17 +367,27 @@ addEvent(window, 'load', DateTimeShortcuts.init);
 <br clear="all" />
 <br /><br />
 {% if start_date %}
+<div id="report">
 <h1>Анализ обращений по учреждениям здравоохранения</h1>
 <p>
 {% if start_date %}c {{start_date|date:"d.m.Y"}} по {{end_date|date:"d.m.Y"}} {% endif %}
 </p>
-<table class="reporttable">
+<table class="reporttable" width="100%" border="1">
+<thead>
 <tr>
-<td>&nbsp;</td>
-{% for i in profile.items %}
-<td class="vertical">{{i.1}}</td>
+<td>Профиль обращения</td>
+{% for i in profile.values %}
+<td class="small" style="background: {{i.color}}">{{i.name}}</td>
 {% endfor %}
 </tr>
+
+<tr>
+<td>Код обращения</td>
+{% for i in profile.values %}
+<td style="background: {{i.color}}">{{i.code}}</td>
+{% endfor %}
+</tr>
+</thead>
 
 {% for tl in table %}
 <tr>
@@ -364,6 +396,15 @@ addEvent(window, 'load', DateTimeShortcuts.init);
   {% endfor %}
 </tr>
 {% endfor %}
+
+<tr>
+   <td style="font-weight: bold">Всего ответов - {{total_sum}}</td>
+  {% for t in total %}
+    <td style="font-weight: bold">{{t}}</td>
+  {% endfor %}
+</tr>
+
 </table>
+</div>
 {% endif %}
 {% endblock %}

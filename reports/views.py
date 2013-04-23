@@ -60,9 +60,11 @@ def analysis(request):
 		mo_dict[l[0]] = l[1]
 		
 	profile_dict = {}
-	cursor.execute("select id, name, code from answers_callprofile order by code")
+	cursor.execute("select t1.id, t1.name, t1.code, t2.code from answers_callprofile as t1 left join answers_callprofilegroup as t2 on t1.group_id = t2.id order by t1.code")
+	color = ['#fcd5b4', '#d99795', '#e5e0ec', '#b6dde8', '#93cddd'] # TODO: move to template tag
+	cl = len(color)
 	for l in cursor.fetchall():
-		profile_dict[l[0]] = "%s - %s" % (l[2], l[1])
+		profile_dict[l[0]] = {'code': l[2], 'name': l[1], 'color': color[(l[3] - 1) % cl ]}
 
 	td = {} # table dictionary
 	for mo_id, profile_id, ac in result:
@@ -71,17 +73,34 @@ def analysis(request):
 		td[mo_id][profile_id] =  ac
 		
 	rt = [] # result table
+	k = {}
+	ss = 0 # super sum
 	for i in td:
 		l = []
 		rt.append(l)
 		l.append(mo_dict.get(i, ""))
+		s = 0;
 		for j in profile_dict:
+			s+=td[i].get(j, 0)
 			l.append(td[i].get(j, ""))
+		#~ l.append(s)
+		ss+=s
+		k[repr(l)] = s
+		
+	rt.sort(key=lambda i: k[repr(i)], reverse=True)
+	
+	
+	le = len(profile_dict)
+	t = [0] * le
+	for l in rt:
+		for i in xrange(1, le + 1):
+			if l[i]:
+				t[i-1]+= l[i]
 			
 	
 			
 	# TODO: maybe using regroup tag in template
-	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': period_form, 'start_date': sd, 'end_date': ed})
+	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': period_form, 'start_date': sd, 'end_date': ed, 'total': t, 'total_sum': ss})
 
 from answers.models import Answer
 def reportthree(request):
