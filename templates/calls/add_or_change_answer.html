@@ -154,7 +154,9 @@ $.ajaxSetup({
    {{answer_form.action.label_tag}}
    {{answer_form.action}}
    {% if answer_form.action.errors %}<p class="text-error">{{answer_form.action.errors|join:' '}}</p>{% endif %}
-   <label class="checkbox">{{answer_form.validity}} {{answer_form.validity.label}}</label>
+   {{answer_form.validity.label_tag}}
+   {{answer_form.validity}}
+   {% if answer_form.validity.errors %}<p class="text-error">{{answer_form.validity.errors|join:' '}}</p>{% endif %}
    {% if call.is_outdated %}
    <hr />
    <div class="alert">

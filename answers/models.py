@@ -52,7 +52,7 @@ class Answer(models.Model):
 	contents = models.TextField("Содержание ответа")
 	profile = models.ForeignKey(CallProfile, verbose_name="Профиль обращения")
 	action = models.ForeignKey(Action, verbose_name="Меры принятые по результатам рассмотрения")
-	validity = models.BooleanField("Претензия обоснована")
+	validity = models.BooleanField("Претензия обоснована", choices=((True , 'Да'), (False, 'Нет')))
 	
 	def call_contents(self):
 		return self.call.contents
