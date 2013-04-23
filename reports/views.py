@@ -2,15 +2,16 @@
 from django.shortcuts import render
 from calls.models import Call
 
-from django.contrib.admin import widgets 
+#~ from django.contrib.admin import widgets 
+from django.contrib.admin.widgets import AdminDateWidget
 from django.utils import timezone
 from datetime import date, datetime, timedelta
 
 from django import forms
 
 class PeriodForm(forms.Form):
-	start_date = forms.DateField(label='с', help_text="01.03.2013")
-	end_date = forms.DateField(label='по', help_text="31.03.2013")
+	start_date = forms.DateField(label='с', help_text="01.03.2013", widget = AdminDateWidget)
+	end_date = forms.DateField(label='по', help_text="31.03.2013", widget = AdminDateWidget)
 
 
 def std(request):
@@ -39,7 +40,8 @@ def analysis(request):
 		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 	else:
 		now = date.today()
-		sd = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		start_month = date(now.year, now.month, 1)
+		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
 		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 		period_form = PeriodForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
 	
@@ -76,8 +78,10 @@ def analysis(request):
 		for j in profile_dict:
 			l.append(td[i].get(j, ""))
 			
+	
+			
 	# TODO: maybe using regroup tag in template
-	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': period_form})
+	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': period_form, 'start_date': sd, 'end_date': ed})
 
 from answers.models import Answer
 def reportthree(request):
