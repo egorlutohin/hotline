@@ -174,6 +174,51 @@ def reportthree(request):
 	
 	return render(request, 'reports/reportthree.html', {'answers': answers})
 	
+def answermans(request):
+	"Отчет по исполнителям"
+	
+	default_tz = timezone.get_default_timezone()
+	
+	period_form = PeriodForm(request.GET)
+	
+	if period_form.is_valid():
+		_ = period_form.cleaned_data['start_date']
+		sd = datetime(_.year, _.month, _.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		_ = period_form.cleaned_data['end_date']
+		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
+	else:
+		now = date.today()
+		start_month = date(now.year, now.month, 1)
+		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
+		period_form = PeriodForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
+	
+	from django.db import connection, transaction
+	cursor = connection.cursor()
+	
+	query = "select last_name, first_name, name, calls_count, answers_count, outdated_count from calls_answerman  left join auth_user on calls_answerman.user_id = auth_user.id left join calls_department on calls_answerman.department_id = calls_department.id \
+                 left join (select answer_man_id, count(*) as calls_count from calls_call where dt >= %s and dt <= %s group by answer_man_id) as calls_count_t on calls_answerman.id = calls_count_t.answer_man_id \
+                 left join (select answer_man_id, count(*) as answers_count from calls_call where dt >= %s and dt <= %s and answer_created is not null group by answer_man_id) as answers_count_t on calls_answerman.id = answers_count_t.answer_man_id \
+                 left join (select answer_man_id, count(*) as outdated_count from calls_call where dt >= %s and dt <= %s and answer_created >=deadline group by answer_man_id) as outdated_count_t on calls_answerman.id = outdated_count_t.answer_man_id \
+                 order by department_id"
+
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')] * 3)
+	
+	#~ result = 
+	rt = []
+	total_counters = {}
+	c = total_counters
+	c['total_calls'] = 0
+	c['total_answers'] = 0
+	c['total_outdated'] = 0
+	for l in cursor.fetchall():
+		c['total_calls']+=l[3] or 0
+		c['total_answers']+=l[4] or 0
+		c['total_outdated']+=l[5] or 0
+		rt.append({'last_name': l[0], 'first_name': l[1], 'department': l[2], 'calls_count': l[3] or 0, 'answers_count': l[4] or 0, 'outdated_count': l[5] or 0})
+	
+	return render(request, 'reports/answermans.html', {'rt': rt, 'start_date': sd, 'end_date': ed, 'pf': period_form, 'total_counters': total_counters})
+	
 	
 	
 

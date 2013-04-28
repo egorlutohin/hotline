@@ -117,4 +117,22 @@ class Reason(models.Model):
 	
 	def __unicode__(self):
 		return u"Причина ответа не в срок на обращение #%d" % self.call.id
+		
+	def answer_man_admin(self):
+		return self.call.answer_man_admin()
+	answer_man_admin.short_description="Ответственный"
+	answer_man_admin.allow_tags = True
+	answer_man_admin.admin_order_field = 'call__answer_man'
+	
+	def citizen_admin(self):
+		return self.call.citizen
+	citizen_admin.admin_order_field = 'call__citizen'
+	citizen_admin.short_description = "Гражданин"
+
+	
+		
+	class Meta:
+		verbose_name = "причина ответа не в срок"
+		verbose_name_plural = "причины ответа не в срок"
+
 

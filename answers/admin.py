@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import CallProfile, Action, Answer, CallProfileGroup
+from models import CallProfile, Action, Answer, CallProfileGroup, Reason
 
 class AnswerAdmin(admin.ModelAdmin):
 	list_display = ('call_id', 'dt', 'mo_admin', 'call_contents', 'contents', 'profile_admin', 'action_short_name', 'validity')
@@ -15,8 +15,12 @@ class AnswerAdmin(admin.ModelAdmin):
 class CallProfileGroupAdmin(admin.ModelAdmin):
 	list_display = ('code', 'name')
 	list_display_links = ('name', )
+	
+class ReasonAdmin(admin.ModelAdmin):
+	list_display = ('call', 'answer_man_admin', 'citizen_admin', 'text')
 
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(CallProfile)
 admin.site.register(CallProfileGroup, CallProfileGroupAdmin)
 admin.site.register(Action)
+admin.site.register(Reason, ReasonAdmin)
