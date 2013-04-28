@@ -17,14 +17,76 @@ class PeriodForm(forms.Form):
 def std(request):
 	"Стандартный отчет"
 	
-	period_form = PeriodForm()
-	now = date.today()
-	start_date = date(now.year, now.month, 1)
-	end_date = date(now.year, now.month + 1, 1) - timedelta(days=1)
+	default_tz = timezone.get_default_timezone()
 	
-	total = Call.objects.filter(dt__gte=start_date, dt__lte=end_date).count()
+	period_form = PeriodForm(request.GET)
 	
-	return render(request, 'reports/std.html', {'form': period_form },)
+	if period_form.is_valid():
+		_ = period_form.cleaned_data['start_date']
+		sd = datetime(_.year, _.month, _.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		_ = period_form.cleaned_data['end_date']
+		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
+	else:
+		now = date.today()
+		start_month = date(now.year, now.month, 1)
+		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
+		period_form = PeriodForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
+		
+	counters = {}
+	
+	from django.db import connection, transaction
+	cursor = connection.cursor()
+	
+	query = "select count(*) as total from calls_call  where dt >= %s and dt <= %s"
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
+	result = cursor.fetchall()
+	counters['calls_total'] = result[0][0]
+	
+	query = "select  count(*)  from calls_call  where dt >= %s and dt <= %s and answer_created is not null"
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
+	result = cursor.fetchall()
+	counters['answers_total'] = result[0][0]
+	counters['answers_total_percent'] = float(counters['answers_total']) / counters['calls_total'] * 100
+	
+	query = "select count(*) from calls_call inner join answers_answer on call_id = id where calls_call.dt >=%s and calls_call.dt <=%s and validity=1"
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
+	result = cursor.fetchall()
+	counters['validity_calls'] = result[0][0]
+	counters['validity_calls_percent'] = float(counters['validity_calls']) / counters['answers_total'] * 100
+	
+	query = "select code, name, counter from answers_callprofile left join (select profile_id, count(*) as counter from calls_call inner join answers_answer on call_id = calls_call.id  where calls_call.dt >=%s and calls_call.dt <= %s group by profile_id) as r on answers_callprofile.id = r.profile_id order by code"
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
+	result = cursor.fetchall()
+	
+	counters['calls_by_profile'] = []
+	for l in result:
+		counters['calls_by_profile'].append(
+			{'code': l[0], 
+			 'name': l[1], 
+			 'counter': l[2] or 0, 
+			 'percent_counter': float(l[2] or 0) / counters['answers_total'] * 100
+			}
+		)
+	
+	query = "select code, name, counter from answers_action left join (select action_id, count(*) as counter from calls_call inner join answers_answer on call_id = id where calls_call.dt >=%s and calls_call.dt <=%s group by action_id) as r on answers_action.id = r.action_id order by code"
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
+	result = cursor.fetchall()
+
+	counters['answers_by_action'] = []
+	for l in result:
+		counters['answers_by_action'].append(
+			{'code': l[0],
+			 'name': l[1],
+			 'counter': l[2] or 0,
+			 'percent_counter': float(l[2] or 0) / counters['answers_total'] * 100
+			}
+		)
+	
+	
+
+	
+	return render(request, 'reports/std.html', {'pf': period_form, 'start_date': sd, 'end_date': ed, 'counters': counters }, )
 	
 def analysis(request):
 	"Анализ"

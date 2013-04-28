@@ -359,7 +359,14 @@ thead tr .small {
 <fieldset class="module aligned" style="float: left;">
     <h2>Параметры отчета</h2>
     <div class="form-row">
-          {{pf.start_date.label}}: {{pf.start_date}} &nbsp;&nbsp;&nbsp; {{pf.end_date.label}}: {{pf.end_date}} &nbsp;&nbsp;&nbsp; <input type="submit" value="Cформировать" />
+          {{pf.start_date.label}}: {{pf.start_date}} &nbsp;&nbsp;&nbsp; {{pf.end_date.label}}: {{pf.end_date}} &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; 
+	  Территория: 
+	  <select>
+	   <option>Вся</option>
+	   <option>Город</option>
+	   <option>Область</option>
+	  </select> &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+	  <input type="submit" value="Cформировать" />
     </div>
 </fieldset>
 </form>
