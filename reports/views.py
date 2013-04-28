@@ -47,13 +47,13 @@ def std(request):
 	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
 	result = cursor.fetchall()
 	counters['answers_total'] = result[0][0]
-	counters['answers_total_percent'] = float(counters['answers_total']) / counters['calls_total'] * 100
+	counters['answers_total_percent'] = float(counters['answers_total']) / (counters['calls_total'] or 1) * 100
 	
 	query = "select count(*) from calls_call inner join answers_answer on call_id = id where calls_call.dt >=%s and calls_call.dt <=%s and validity=1"
 	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
 	result = cursor.fetchall()
 	counters['validity_calls'] = result[0][0]
-	counters['validity_calls_percent'] = float(counters['validity_calls']) / counters['answers_total'] * 100
+	counters['validity_calls_percent'] = float(counters['validity_calls']) / (counters['answers_total'] or 1) * 100
 	
 	query = "select code, name, counter from answers_callprofile left join (select profile_id, count(*) as counter from calls_call inner join answers_answer on call_id = calls_call.id  where calls_call.dt >=%s and calls_call.dt <= %s group by profile_id) as r on answers_callprofile.id = r.profile_id order by code"
 	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
@@ -65,7 +65,7 @@ def std(request):
 			{'code': l[0], 
 			 'name': l[1], 
 			 'counter': l[2] or 0, 
-			 'percent_counter': float(l[2] or 0) / counters['answers_total'] * 100
+			 'percent_counter': float(l[2] or 0) / (counters['answers_total'] or 1) * 100
 			}
 		)
 	
@@ -79,12 +79,15 @@ def std(request):
 			{'code': l[0],
 			 'name': l[1],
 			 'counter': l[2] or 0,
-			 'percent_counter': float(l[2] or 0) / counters['answers_total'] * 100
+			 'percent_counter': float(l[2] or 0) / (counters['answers_total'] or 1) * 100
 			}
 		)
-	
-	
-
+		
+	query = "select count(*) from calls_call  where calls_call.dt>=%s and calls_call.dt<=%s and deadline>=answer_created"
+	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
+	result = cursor.fetchall()
+	counters['answers_not_outdated'] = result[0][0]
+	counters['answers_not_outdated_percent'] = float(counters['answers_not_outdated']) / (counters['answers_total'] or 1) * 100
 	
 	return render(request, 'reports/std.html', {'pf': period_form, 'start_date': sd, 'end_date': ed, 'counters': counters }, )
 	

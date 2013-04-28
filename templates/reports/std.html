@@ -395,6 +395,11 @@ thead tr .small {
   <td>{{counters.answers_total_percent|floatformat:"2"}}</td>
 </tr>
 <tr>
+ <td>Направлено ответов в установленый срок</td>
+ <td>{{counters.answers_not_outdated}}</td>
+ <td>{{counters.answers_not_outdated_percent|floatformat:"2"}}</td>
+</tr>
+<tr>
   <td>Число обоснованных претензий, всего</td>
   <td>{{counters.validity_calls}}</td>
   <td>{{counters.validity_calls_percent|floatformat:"2"}}</td>
@@ -423,7 +428,6 @@ thead tr .small {
   <td>{{l.percent_counter|floatformat:"2"}}</td>
 </tr>
 {% endfor %}
-
 </table>
 {% endif %}
 {% endblock %}
