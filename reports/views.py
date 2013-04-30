@@ -200,7 +200,7 @@ def answermans(request):
                  left join (select answer_man_id, count(*) as calls_count from calls_call where dt >= %s and dt <= %s group by answer_man_id) as calls_count_t on calls_answerman.id = calls_count_t.answer_man_id \
                  left join (select answer_man_id, count(*) as answers_count from calls_call where dt >= %s and dt <= %s and answer_created is not null group by answer_man_id) as answers_count_t on calls_answerman.id = answers_count_t.answer_man_id \
                  left join (select answer_man_id, count(*) as outdated_count from calls_call where dt >= %s and dt <= %s and answer_created >=deadline group by answer_man_id) as outdated_count_t on calls_answerman.id = outdated_count_t.answer_man_id \
-                 order by department_id"
+                 order by department_id, last_name"
 
 	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')] * 3)
 	
