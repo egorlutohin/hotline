@@ -1,6 +1,6 @@
 ﻿from django.http import HttpResponse
 from django.shortcuts import render
-from calls.models import Call
+from calls.models import Call, MO
 
 #~ from django.contrib.admin import widgets 
 from django.contrib.admin.widgets import AdminDateWidget
@@ -10,10 +10,9 @@ from datetime import date, datetime, timedelta
 from django import forms
 
 class PeriodForm(forms.Form):
-	start_date = forms.DateField(label='с', help_text="01.03.2013", widget = AdminDateWidget)
-	end_date = forms.DateField(label='по', help_text="31.03.2013", widget = AdminDateWidget)
-
-
+	start_date = forms.DateField(label='с', widget = AdminDateWidget)
+	end_date = forms.DateField(label='по', widget = AdminDateWidget)
+	
 def std(request):
 	"Стандартный отчет"
 	
@@ -91,31 +90,38 @@ def std(request):
 	
 	return render(request, 'reports/std.html', {'pf': period_form, 'start_date': sd, 'end_date': ed, 'counters': counters }, )
 	
+class AnalysisForm(PeriodForm):
+	type = forms.TypedChoiceField(choices=[('', 'Любой'),]+MO.TYPE.choices(), required=False, label='Тип МО', coerce=int)
+	
 def analysis(request):
 	"Анализ"
 	
 	default_tz = timezone.get_default_timezone()
 	
-	period_form = PeriodForm(request.GET)
+	params_form = AnalysisForm(request.GET)
 	
-	if period_form.is_valid():
-		_ = period_form.cleaned_data['start_date']
+	if params_form.is_valid():
+		_ = params_form.cleaned_data['start_date']
 		sd = datetime(_.year, _.month, _.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
-		_ = period_form.cleaned_data['end_date']
+		_ = params_form.cleaned_data['end_date']
 		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 	else:
 		now = date.today()
 		start_month = date(now.year, now.month, 1)
 		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
 		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
-		period_form = PeriodForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
+		params_form = AnalysisForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
 	
 	from django.db import connection, transaction
 	cursor = connection.cursor()
 	
-	query = "select mo_id, profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id where t1.dt >= %s and t1.dt <= %s group by mo_id, profile_id order by mo_id, profile_id"
 	
-	cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
+	if params_form.cleaned_data['type']:
+		query = "select mo_id,  profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id left join calls_mo as t3 on t2.mo_id = t3.id  where t1.dt >= %s and t1.dt <= %s and t3.type=%s group by mo_id, profile_id order by mo_id, profile_id"
+		cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S'), params_form.cleaned_data['type']])
+	else:
+		query = "select mo_id, profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id where t1.dt >= %s and t1.dt <= %s group by mo_id, profile_id order by mo_id, profile_id"
+		cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
 	
 	result = cursor.fetchall()
 	
@@ -165,7 +171,7 @@ def analysis(request):
 	
 			
 	# TODO: maybe using regroup tag in template
-	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': period_form, 'start_date': sd, 'end_date': ed, 'total': t, 'total_sum': ss})
+	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': params_form, 'start_date': sd, 'end_date': ed, 'total': t, 'total_sum': ss})
 
 from answers.models import Answer
 def reportthree(request):
