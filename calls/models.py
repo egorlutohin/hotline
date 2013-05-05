@@ -21,7 +21,7 @@ class Citizen(models.Model):
 	add_call_link.allow_tags = True
 	
 	def __unicode__(self):
-		return u"%s, %d г.р." % (self.SNP, self.birthyear)
+		return u"%s, %d г.р." % (self.SNP, self.birthyear)
 		
 	def number(self):
 		return self.id

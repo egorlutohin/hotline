@@ -91,7 +91,7 @@ def std(request):
 	return render(request, 'reports/std.html', {'pf': period_form, 'start_date': sd, 'end_date': ed, 'counters': counters }, )
 	
 class AnalysisForm(PeriodForm):
-	type = forms.TypedChoiceField(choices=[('', 'Любой'),]+MO.TYPE.choices(), required=False, label='Тип МО', coerce=int)
+	type = forms.TypedChoiceField(choices=[('', 'Любой'),]+MO.TYPE.choices(), required=False, label='тип МО', coerce=int)
 	
 def analysis(request):
 	"Анализ"
@@ -116,7 +116,7 @@ def analysis(request):
 	cursor = connection.cursor()
 	
 	
-	if params_form.cleaned_data['type']:
+	if params_form.is_valid() and params_form.cleaned_data['type']:
 		query = "select mo_id,  profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id left join calls_mo as t3 on t2.mo_id = t3.id  where t1.dt >= %s and t1.dt <= %s and t3.type=%s group by mo_id, profile_id order by mo_id, profile_id"
 		cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S'), params_form.cleaned_data['type']])
 	else:
@@ -172,13 +172,41 @@ def analysis(request):
 			
 	# TODO: maybe using regroup tag in template
 	return render(request, 'reports/analysis.html', {'mo': mo_dict, 'profile': profile_dict, 'table': rt, 'pf': params_form, 'start_date': sd, 'end_date': ed, 'total': t, 'total_sum': ss})
+	
+
+class R3Form(PeriodForm):
+	mo = forms.ModelChoiceField(label="МО" ,queryset=MO.objects.all(), empty_label="Все", required=False)
+	validity = forms.TypedChoiceField(label="обоснованность", required=False, choices=(("", "Не важно"),(1, "Да"),(0, "Нет")), coerce=int, empty_value=None)
 
 from answers.models import Answer
 def reportthree(request):
 	
-	answers = Answer.objects.select_related('call', 'call__citizen', 'call__mo', 'call__answer_man', 'call__answer_man__department', 'call__answer_man__user', 'profile', 'action').all().order_by('profile__code')
+	default_tz = timezone.get_default_timezone()
+	params_form = R3Form(request.GET)
 	
-	return render(request, 'reports/reportthree.html', {'answers': answers})
+	answers = Answer.objects.select_related('call', 'call__citizen', 'call__mo', 'call__answer_man', 'call__answer_man__department', 'call__answer_man__user', 'profile', 'action').all().order_by('profile__code')
+	if params_form.is_valid():
+		_ = params_form.cleaned_data['start_date']
+		sd = datetime(_.year, _.month, _.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		_ = params_form.cleaned_data['end_date']
+		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
+		
+		answers = answers.filter(call__dt__gte=sd, call__dt__lte=ed)
+		
+		if params_form.cleaned_data['mo']:
+			answers = answers.filter(call__mo=params_form.cleaned_data['mo'])
+		#~ print params_form.cleaned_data['validity']
+		if params_form.cleaned_data['validity'] is not None:
+			answers = answers.filter(validity=bool(params_form.cleaned_data['validity']))
+	else:
+		now = date.today()
+		start_month = date(now.year, now.month, 1)
+		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
+		params_form = R3Form({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
+		answers = answers.filter(call__dt__gte=sd, call__dt__lte=ed)
+	
+	return render(request, 'reports/reportthree.html', {'answers': answers, 'pf': params_form, 'start_date': sd, 'end_date': ed})
 	
 def answermans(request):
 	"Отчет по исполнителям"
