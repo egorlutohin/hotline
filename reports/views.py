@@ -1,6 +1,7 @@
 ﻿from django.http import HttpResponse
 from django.shortcuts import render
 from calls.models import Call, MO
+from django.contrib.auth.decorators import permission_required
 
 #~ from django.contrib.admin import widgets 
 from django.contrib.admin.widgets import AdminDateWidget
@@ -13,6 +14,7 @@ class PeriodForm(forms.Form):
 	start_date = forms.DateField(label='с', widget = AdminDateWidget)
 	end_date = forms.DateField(label='по', widget = AdminDateWidget)
 	
+@permission_required('reports.can_view', raise_exception=True)
 def std(request):
 	"Стандартный отчет"
 	
@@ -92,7 +94,8 @@ def std(request):
 	
 class AnalysisForm(PeriodForm):
 	type = forms.TypedChoiceField(choices=[('', 'Любой'),]+MO.TYPE.choices(), required=False, label='тип МО', coerce=int)
-	
+
+@permission_required('reports.can_view', raise_exception=True)	
 def analysis(request):
 	"Анализ"
 	
@@ -179,6 +182,8 @@ class R3Form(PeriodForm):
 	validity = forms.TypedChoiceField(label="обоснованность", required=False, choices=(("", "Не важно"),(1, "Да"),(0, "Нет")), coerce=int, empty_value=None)
 
 from answers.models import Answer
+
+@permission_required('reports.can_view', raise_exception=True)
 def reportthree(request):
 	
 	default_tz = timezone.get_default_timezone()
@@ -207,7 +212,8 @@ def reportthree(request):
 		answers = answers.filter(call__dt__gte=sd, call__dt__lte=ed)
 	
 	return render(request, 'reports/reportthree.html', {'answers': answers, 'pf': params_form, 'start_date': sd, 'end_date': ed})
-	
+
+@permission_required('reports.can_view', raise_exception=True)
 def answermans(request):
 	"Отчет по исполнителям"
 	
