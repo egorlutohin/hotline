@@ -1,11 +1,11 @@
 import os
 import settings
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-	('Egor Lutohin', 'egor@lutohin.nsk.ru'),
+	('Super admin', 'superadmin@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -21,3 +21,16 @@ DATABASES = {
 	}
 }
 
+### ACTIVE DIRECTORY AUTHENTICATION SETTINGS
+
+## AD_DNS_NAME should set to the AD DNS name of the domain (ie; example.com)  
+## If you are not using the AD server as your DNS, it can also be set to 
+## FQDN or IP of the AD server.
+
+#AD_DNS_NAME = 'example.com' # required param !!!
+#AD_LDAP_PORT = 389 # by default 389
+
+## This is the NT4/Samba domain name
+#AD_NT4_DOMAIN = 'EXAMPLE' # required param !!!
+
+### /ACTIVE DIRECTORY AUTHENTICATION SETTINGS

@@ -181,4 +181,14 @@ SERVER_URL = '' # eg. http://hotline.ru без завершающего слэш
 SECRET_KEY = '_8is^v4xlm(qb0j_bxsu)2%f7fb5$816z*u%1re(oj9@&amp;iva$r'
 
 
+AD_LDAP_PORT = 389
+
 from localsettings import *
+
+try:
+    AD_NT4_DOMAIN, AD_DNS_NAME # used in authentication ldap backend
+except:
+    pass
+finally:
+    AD_LDAP_URL = 'ldap://%s:%d' % (AD_DNS_NAME, AD_LDAP_PORT)
+    AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'hotline.adauth.ActiveDirectoryBackend')
