@@ -120,10 +120,10 @@ def analysis(request):
 	
 	
 	if params_form.is_valid() and params_form.cleaned_data['type']:
-		query = "select mo_id,  profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id left join calls_mo as t3 on t2.mo_id = t3.id  where t1.dt >= %s and t1.dt <= %s and t3.type=%s group by mo_id, profile_id order by mo_id, profile_id"
+		query = "select mo_id,  profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id left join calls_mo as t3 on t2.mo_id = t3.id  where t2.dt >= %s and t2.dt <= %s and t3.type=%s group by mo_id, profile_id order by mo_id, profile_id"
 		cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S'), params_form.cleaned_data['type']])
 	else:
-		query = "select mo_id, profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id where t1.dt >= %s and t1.dt <= %s group by mo_id, profile_id order by mo_id, profile_id"
+		query = "select mo_id, profile_id, count(*) as answers_count from answers_answer as t1 left join calls_call as t2 on t1.call_id=t2.id where t2.dt >= %s and t2.dt <= %s group by mo_id, profile_id order by mo_id, profile_id"
 		cursor.execute(query, [sd.strftime('%Y-%m-%d %H:%M:%S'), ed.strftime('%Y-%m-%d %H:%M:%S')])
 	
 	result = cursor.fetchall()
