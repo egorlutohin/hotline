@@ -206,9 +206,13 @@ def answer_detail(request, call_id):
 	
 	try:
 		answerman = AnswerMan.objects.get(user=request.user)
-		call = Call.objects.select_related('citizen', 'mo').get(answer_man=answerman, pk=call_id)
-	except (Call.DoesNotExist, AnswerMan.DoesNotExist):
+	except AnswerMan.DoesNotExist:
 		raise PermissionDenied('Вам не положено видеть эту страницу!') # http 403
+	
+	try:	
+		call = Call.objects.select_related('citizen', 'mo').get(answer_man=answerman, pk=call_id)
+	except Call.DoesNotExist:
+		raise Http404()
 		
 	if not call.call_received:
 		call.call_received = timezone.now()
