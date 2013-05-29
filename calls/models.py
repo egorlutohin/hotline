@@ -16,7 +16,7 @@ class Citizen(models.Model):
 	last_appeal = models.DateTimeField("Дата последнего обращения", blank=True, null=True)
 
 	def add_call_link(self):
-		return '<a class="addlink" href="/operator/calls/call/add/?citizen=%d">Обращение</a>' % self.id
+		return '<a class="addlink" href="../call/add/?citizen=%d">Обращение</a>' % self.id
 	add_call_link.short_description = "Добавить обращение"
 	add_call_link.allow_tags = True
 	
@@ -164,10 +164,10 @@ class Call(models.Model):
 	def add_or_change_answer_link(self):
 		if self.answer_created:
 			#изменить ответ
-			return '<a class="changelink" href="/operator/answers/answer/%d/">Изменить</a>' % self.id
+			return '<a class="changelink" href="../../answers/answer/%d/">Изменить</a>' % self.id
 		else:
 			# добавить ответ
-			return '<a class="addlink" href="/operator/answers/answer/add/?call=%d">Добавить</a>' % self.id
+			return '<a class="addlink" href="../../answers/answer/add/?call=%d">Добавить</a>' % self.id
 	add_or_change_answer_link.short_description = "Ответ"
 	add_or_change_answer_link.allow_tags = True
 
