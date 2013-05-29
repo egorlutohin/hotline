@@ -220,7 +220,7 @@ def answer_detail(request, call_id):
 	if request.method == "POST":
 		#update or create
 		answer_form = AnswerModelForm(request.POST, instance=call.get_answer())
-		if answer_form.is_valid():
+		if answer_form.is_valid() and (call.mo is not None): # не сохранять если не выбрана медицинская организация
 			answer = answer_form.save(commit=False)
 			answer.call = call
 			answer.dt = timezone.now()

@@ -3,5 +3,6 @@
 *.pyc
 /hotline/localsettings.py
 /hotline-packages
+/.hotline-env
 /db/hotlinedb.sqlite3
 *~
