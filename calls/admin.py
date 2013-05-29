@@ -74,7 +74,7 @@ class CallAdmin(admin.ModelAdmin):
 		
 	def queryset(self, request):
 		return super(CallAdmin, self).queryset(request).select_related(
-				'operator', 'citizen', 'mo', 'answer_man', 'answer_man__user',)
+				'operator', 'citizen', 'mo', 'answer_man', 'answer_man__user')
 
 class AnswerManAdmin(admin.ModelAdmin):
 	list_display = ('print_answerman_name', 'department')

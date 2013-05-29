@@ -44,12 +44,18 @@ class Department(models.Model):
 	class Meta:
 		verbose_name = "отдела"
 		verbose_name_plural = "отделы"
-	
+
+class AnswerManDefaultManager(models.Manager):
+	def get_query_set(self):
+		return super(AnswerManDefaultManager, self).get_query_set().select_related('user', 'department')
+
 class AnswerMan(models.Model):
 	"Ответственный за подготовку ответа (отвечающий человек)"
 	department = models.ForeignKey(Department, verbose_name = "Отдел")
 	user = models.ForeignKey(User, verbose_name = "Пользователь в системе")
 	comment = models.CharField("Комментарий", max_length=200, blank=True, null=True, help_text="Например фамилия")
+	
+	objects = AnswerManDefaultManager()
 	
 	
 	def print_answerman_name(self):
@@ -65,6 +71,7 @@ class AnswerMan(models.Model):
 		verbose_name = "ответственного за подготовку ответа"
 		verbose_name_plural = "Ответственные за подготовку ответа"
 		unique_together = ('department', 'user')
+		ordering = ('department', 'user__last_name')
 	
 class MO(models.Model):
 	"Медицинская организация"
