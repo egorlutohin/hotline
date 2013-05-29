@@ -29,8 +29,7 @@ def std(request):
 		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 	else:
 		now = date.today()
-		start_month = date(now.year, now.month, 1)
-		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		sd = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
 		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 		period_form = PeriodForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
 		
@@ -110,8 +109,7 @@ def analysis(request):
 		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 	else:
 		now = date.today()
-		start_month = date(now.year, now.month, 1)
-		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		sd = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
 		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 		params_form = AnalysisForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
 	
@@ -205,8 +203,7 @@ def reportthree(request):
 			answers = answers.filter(validity=bool(params_form.cleaned_data['validity']))
 	else:
 		now = date.today()
-		start_month = date(now.year, now.month, 1)
-		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		sd = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
 		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 		params_form = R3Form({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
 		answers = answers.filter(call__dt__gte=sd, call__dt__lte=ed)
@@ -228,8 +225,7 @@ def answermans(request):
 		ed = datetime(_.year, _.month, _.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 	else:
 		now = date.today()
-		start_month = date(now.year, now.month, 1)
-		sd = datetime(start_month.year, start_month.month, start_month.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
+		sd = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo = default_tz).astimezone(timezone.utc)
 		ed = datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo = default_tz).astimezone(timezone.utc)
 		period_form = PeriodForm({'start_date': sd.astimezone(default_tz).strftime("%d.%m.%Y"), 'end_date': ed.astimezone(default_tz).strftime("%d.%m.%Y")})
 	

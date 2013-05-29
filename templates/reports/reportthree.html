@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 
-{% block title %}Отчет №3{% endblock %}
+{% block title %}Анализ ответов по профилям{% endblock %}
 
 {% block extrahead %}
 <!-- extra head for admindatetime -->
@@ -347,7 +347,7 @@ thead tr .small {
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href="{% url 'admin:index' %}" accesskey="-">{% trans 'Home' %}</a>
-&rsaquo; Отчет №3
+&rsaquo; Анализ ответов по профилям
 </div>
 {% endblock %}
 
@@ -371,7 +371,7 @@ thead tr .small {
 <br /><br />
 
 
-<h1>Отчет №3</h1>
+<h1>ААнализ ответов по профилям</h1>
 <p>
 {% if start_date %}c {{start_date|date:"d.m.Y"}} по {{end_date|date:"d.m.Y"}}{% endif %}, количество обращений - {{answers.count}}
 </p>
