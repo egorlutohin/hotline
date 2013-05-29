@@ -20,7 +20,17 @@
         <div class="module">
         <table>
         <caption>
-                {% blocktrans with name=app.name %}{{ name }}{% endblocktrans %}
+                {% if app.name == "Answers" %}
+		Ответы
+		{% elif app.name == "Auth" %}
+		Авторизация
+		{% elif app.name == "Calls" %}
+		Обращения
+		{% elif app.name == "Workcalendar" %}
+		Рабочий календарь
+		{% else%}
+		{{app.name}}
+		{% endif %}
         </caption>
         {% for model in app.models %}
             <tr>
