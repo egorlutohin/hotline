@@ -21,6 +21,10 @@ DATABASES = {
 	}
 }
 
+DATABASE_OPTIONS = {
+   "init_command": "SET storage_engine=INNODB",
+}
+
 ### ACTIVE DIRECTORY AUTHENTICATION SETTINGS
 
 ## AD_DNS_NAME should set to the AD DNS name of the domain (ie; example.com)  
