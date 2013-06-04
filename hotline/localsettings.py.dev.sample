@@ -4,10 +4,6 @@ import settings
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-	('Egor Lutohin', 'egor@lutohin.nsk.ru'),
-)
-
 MANAGERS = ADMINS
 
 DATABASES = {

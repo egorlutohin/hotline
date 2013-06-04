@@ -175,7 +175,7 @@ LOGOUT_URL = '/logout/'
 
 # ttl rss 2.0 для поступивших обращений на горячую линию в минутах
 RSS_FEED_TTL = 10 
-ITEMS_IN_FEED = 100
+ITEMS_IN_FEED = 15
 SERVER_URL = '' # eg. http://hotline.ru без завершающего слэша
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '_8is^v4xlm(qb0j_bxsu)2%f7fb5$816z*u%1re(oj9@&amp;iva$r'

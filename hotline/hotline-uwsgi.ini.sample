@@ -1,0 +1,10 @@
+[uwsgi]
+uid = www-data
+gid = www-data
+virtualenv=/web/hotline/.hotline-packages/
+chdir = /web/hotline/
+socket = 127.0.0.1:8001
+processes = 2
+env = DJANGO_SETTINGS_MODULE=hotline.settings
+module = django.core.handlers.wsgi:WSGIHandler()
+disable-logging = true

@@ -1,0 +1,16 @@
+upstream hotline_django {
+    server 127.0.0.1:8001;
+}
+
+server {
+    server_name localhost; 
+
+    location /static {
+        alias /web/hotline/public_html/static; 
+    }
+
+    location / {
+        uwsgi_pass  hotline_django;
+        include     /web/hotline/hotline/uwsgi_params; 
+    }
+}
