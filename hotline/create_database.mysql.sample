@@ -1,2 +1,2 @@
 create database hotline charset=utf8;
-grant all on hotline.* to hotline@127.0.0.1 identified by 'hotlinepassword';
+grant all on hotline.* to hotline@localhost identified by 'hotlinepassword';

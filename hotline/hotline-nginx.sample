@@ -11,6 +11,6 @@ server {
 
     location / {
         uwsgi_pass  hotline_django;
-        include     /web/hotline/hotline/uwsgi_params; 
+        include     /etc/nginx/uwsgi_params; 
     }
 }
