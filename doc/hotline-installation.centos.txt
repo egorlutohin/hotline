@@ -21,11 +21,14 @@
   * параметры active directory для аутентификации в Active Directory (если не нужна, можно оставить закомментированными)
     * AD_DNS_NAME - DNS имя домена, или FQDN сервера AD, или ip-адрес сервера AD
     * AD_NT4_DOMAIN - имя домена AD
-13. ./manage.py syncdb
+13. cd ..; virtualenv --system-site-packages .hotline-packages
+14. source .hotline-packages/bin/activate
+15. pip install -r pip-require.txt
+16. ./manage.py syncdb
 Cоздаем таблицы в базе данных
 На вопрос "You just installed Django's auth system, which means you don't have any superusers defined.
 Would you like to create one now? (yes/no): " ответить "yes", задать имя и пароль администратора ИС, передать логин и пароль администратору ИС
-14. ./manage.py collectstatic
+17. ./manage.py collectstatic
 На вопрос 
 "You have requested to collect static files at the destination
 location as specified in your settings.
@@ -36,11 +39,11 @@ Are you sure you want to do this?
 Type 'yes' to continue, or 'no' to cancel: " 
 
 ответить "yes"
-15. hotline/hotline-uwsgi.ini.sample /etc/uwsgi.d/hotline-uwsgi.ini (второй строчкой в файле hotline-uwsgi.ini добавить "plugins = python", поменять параметры uid=nginx, gid=nginx)
-16. установить в файле /etc/uwsgi.ini emperor-tyrant=false
-17. cp hotline/hotline-nginx.sample /etc/nginx/conf.d/hotline.conf
-18. vi /etc/nginx/conf.d/hotline.conf - установить правильный параметр server_name
-19. systemctl enable nginx; systemctl enable uwsgi
-20. Настроить firewalld (я далал systemctl stop firewalld; systemctl disable firewalld) и selinux (я делал /etc/sysconfig/selinux SELINUX=disabled; reboot)
-21. systemctl start uwsgi
-22. systemctl start nginx
+18. cp hotline/hotline-uwsgi.ini.sample /etc/uwsgi.d/hotline-uwsgi.ini (второй строчкой в файле hotline-uwsgi.ini добавить "plugins = python", поменять параметры uid=nginx, gid=nginx)
+19. установить в файле /etc/uwsgi.ini emperor-tyrant=false
+20. cp hotline/hotline-nginx.sample /etc/nginx/conf.d/hotline.conf
+21. vi /etc/nginx/conf.d/hotline.conf - установить правильный параметр server_name
+22. systemctl enable nginx; systemctl enable uwsgi
+23. Настроить firewalld (я далал systemctl stop firewalld; systemctl disable firewalld) и selinux (я делал /etc/sysconfig/selinux SELINUX=disabled; reboot)
+24. systemctl start uwsgi
+25. systemctl start nginx
