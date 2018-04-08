@@ -1,0 +1,46 @@
+# Краткая инструкция по установке
+
+0. yum install epel-release
+1. yum install python python2-pip python-virtualenv python-ldap nginx mariadb-server MySQL-python wget uwsgi uwsgi-plugin-python
+2. systemctl start mariadb
+3. Поменять пароль root mariadb (mysql -u root; USE mysql; UPDATE user SET password=PASSWORD('YourPasswordHere') WHERE User='root' AND Host = 'localhost'; FLUSH PRIVILEGES;)
+6. wget https://github.com/egorlutohin/hotline/archive/v1.0.tar.gz
+7. tar -xzvf v1.0.tar.gz; rm -rf v1.0.tar.gz; ln -s hotline-1.0 hotline; cd hotline/hotline
+8. cp create_database.mysql.sample create_database.mysql
+9. Изменить в файле create_database.mysql пароль
+10. mysql -u root -p < create_database.mysql
+11. cp localsettings.py.sample localsettings.py
+12. В конфигурационном файле localsettings.py вписываем:
+  * параметры бызы данных в словаре DATABASES/default
+    * name - имя базы данных (по умолчанию "hotline")
+    * user - пользователь базы данных (по умолчанию "hotline")
+    * password - пароль для базы данных (установленный на 6 шаге)
+  * параметры приложения
+    * SERVER_URL
+    * ALLOWED_HOSTS    
+  * параметры active directory для аутентификации в Active Directory (если не нужна, можно оставить закомментированными)
+    * AD_DNS_NAME - DNS имя домена, или FQDN сервера AD, или ip-адрес сервера AD
+    * AD_NT4_DOMAIN - имя домена AD
+13. ./manage.py syncdb
+Cоздаем таблицы в базе данных
+На вопрос "You just installed Django's auth system, which means you don't have any superusers defined.
+Would you like to create one now? (yes/no): " ответить "yes", задать имя и пароль администратора ИС, передать логин и пароль администратору ИС
+14. ./manage.py collectstatic
+На вопрос 
+"You have requested to collect static files at the destination
+location as specified in your settings.
+
+This will overwrite existing files!
+Are you sure you want to do this?
+
+Type 'yes' to continue, or 'no' to cancel: " 
+
+ответить "yes"
+15. hotline/hotline-uwsgi.ini.sample /etc/uwsgi.d/hotline-uwsgi.ini (второй строчкой в файле hotline-uwsgi.ini добавить "plugins = python", поменять параметры uid=nginx, gid=nginx)
+16. установить в файле /etc/uwsgi.ini emperor-tyrant=false
+17. cp hotline/hotline-nginx.sample /etc/nginx/conf.d/hotline.conf
+18. vi /etc/nginx/conf.d/hotline.conf - установить правильный параметр server_name
+19. systemctl enable nginx; systemctl enable uwsgi
+20. Настроить firewalld (я далал systemctl stop firewalld; systemctl disable firewalld) и selinux (я делал /etc/sysconfig/selinux SELINUX=disabled; reboot)
+21. systemctl start uwsgi
+22. systemctl start nginx
